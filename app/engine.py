@@ -135,15 +135,19 @@ def analyze_query(query: str) -> Dict[str, Any]:
             factor = EMISSION_FACTORS.get(mapped_key, 0.192)
             # Determine distance
             km = 45.0
+            has_explicit_dist = False
             if dist_match:
                 val = float(dist_match.group(1))
                 if "mile" in dist_match.group(0) or "mi" in dist_match.group(0):
                     km = round(val * 1.60934, 1)
                 else:
                     km = val
+                has_explicit_dist = True
             elif mapped_key == "flight":
                 km = 800.0 if "domestic" in lower else 2400.0
-
+                has_explicit_dist = True if ("domestic" in lower or "international" in lower) else False
+            else:
+                km = 25.0  # standard average daily commute baseline
 
             co2 = round(km * factor, 2)
             
@@ -156,13 +160,18 @@ def analyze_query(query: str) -> Dict[str, Any]:
                 savings = 0.0
                 swap_text = f"Excellent low-carbon transit choice! You avoided substantial road emissions."
 
+            formula_text = f"{km} km × {factor} kg CO2e/km"
+            if not has_explicit_dist:
+                formula_text += " (using standard 25 km commute baseline)"
+
             detected.append({
                 "category": "transportation",
                 "title": f"🚗 Travel via {tk.title()} ({km} km)",
                 "emissions": co2,
                 "savings": savings,
-                "formula": f"{km} km × {factor} kg CO2e/km",
-                "swap": swap_text
+                "formula": formula_text,
+                "swap": swap_text,
+                "has_number": has_explicit_dist
             })
             primary_category = "transportation"
             break
@@ -271,24 +280,6 @@ def analyze_query(query: str) -> Dict[str, Any]:
                 primary_category = "shopping"
             break
 
-    # Fallback if no specific keyword matched:
-    # Derive intelligent dynamic estimate from text length, numbers, and vocabulary
-    if not detected:
-        # Dynamically scale based on numbers found or query complexity
-        base_num = float(generic_num.group(1)) if generic_num else 15.0
-        # Determine reasonable range
-        co2 = round(min(50.0, max(1.2, base_num * 0.18)), 2)
-        savings = round(co2 * 0.42, 2)
-        
-        detected.append({
-            "category": "general",
-            "title": f"📊 Custom Activity Analysis",
-            "emissions": co2,
-            "savings": savings,
-            "formula": f"Synthesized carbon footprint based on activity profile",
-            "swap": f"Optimizing this lifestyle choice with renewable energy and reduced consumption avoids ~{savings} kg CO2e."
-        })
-
     total_emissions = round(sum(d["emissions"] for d in detected), 2)
     total_savings = round(sum(d["savings"] for d in detected), 2)
 
@@ -296,8 +287,10 @@ def analyze_query(query: str) -> Dict[str, Any]:
         "items": detected,
         "total_emissions_kg": total_emissions,
         "total_saved_kg": total_savings,
-        "category": primary_category,
+        "category": primary_category if detected else "none",
+        "has_activity": len(detected) > 0
     }
+
 
 def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_summary: Dict[str, Any] = None) -> Dict[str, Any]:
     """Conversational AI Chatbot handler with memory, greetings, and contextual advice."""
@@ -335,7 +328,22 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
             "category": "general"
         }
 
-    # 3. Bot Identity & Capabilities
+    # 3. Dismissal / Frustration / Rude inputs
+    dismissive = ["shutup", "shut up", "quiet", "be quiet", "stop talking", "go away", "leave me alone", "fuck off", "stfu"]
+    if any(d in lower for d in dismissive):
+        return {
+            "reply": (
+                "🌿 **Understood!** I'll pause right here.\n\n"
+                "Whenever you'd like to calculate travel emissions, compare eco-swaps, or track your carbon budget, "
+                "just send me a message anytime!"
+            ),
+            "is_chat_only": True,
+            "total_emissions_kg": 0.0,
+            "total_saved_kg": 0.0,
+            "category": "general"
+        }
+
+    # 4. Bot Identity & Capabilities
     if any(q in lower for q in ["who are you", "what are you", "what can you do", "help me", "how does this work"]):
         return {
             "reply": (
@@ -414,6 +422,25 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
     tot_saved = analysis["total_saved_kg"]
     cat = analysis["category"]
 
+    # If no carbon-emitting activity was identified in query
+    if not items:
+        return {
+            "reply": (
+                f"💬 *\"{clean}\"*\n\n"
+                "I didn't detect any specific lifestyle or carbon-emitting activity in your message.\n\n"
+                "To calculate your real-time carbon footprint, tell me about an activity such as:\n"
+                "- 🚗 **Travel & Commute:** *\"I drove 25 km in a gasoline car\"*\n"
+                "- ✈️ **Aviation:** *\"Took an 800 km domestic flight\"*\n"
+                "- 🥗 **Food & Dining:** *\"Ate a 250g steak dinner\"*\n"
+                "- ⚡ **Home Energy:** *\"Ran my air conditioner for 4 hours\"*\n\n"
+                "*Tip: You can include exact numbers (e.g., \"25 km\", \"250g\"), or just state the activity and I'll apply industry average benchmarks!*"
+            ),
+            "is_chat_only": True,
+            "total_emissions_kg": 0.0,
+            "total_saved_kg": 0.0,
+            "category": "general"
+        }
+
     lines = [
         f"🌿 **I analyzed your activity:** *\"{clean}\"*\n",
         f"Here is your calculated carbon impact breakdown:\n"
@@ -428,6 +455,10 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
     lines.append(f"📊 **Total Activity Footprint:** `{tot_co2} kg CO2e`")
     if tot_saved > 0:
         lines.append(f"🌱 **Potential Avoided Emissions:** `{tot_saved} kg CO2e`")
+
+    has_unspecified = any(not it.get("has_number", True) for it in items)
+    if has_unspecified:
+        lines.append("\n💡 *Benchmark Note: Since no specific numbers were provided, this was calculated using standard daily averages. Reply with your actual numbers (e.g. \"it was 15 km\") and I'll recalculate!*")
 
     lines.append(f"\n*Would you like me to log this to your dashboard? Reply **\"log this\"** or use the quick action button below.*")
 
