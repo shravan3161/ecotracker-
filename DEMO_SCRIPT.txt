@@ -1,0 +1,94 @@
+ECOTRACKER — DEMO SCRIPT
+Spoken narration for a 3-4 minute presentation
+=======================================================
+
+
+[0:00 — HOOK]
+
+Most people have no idea what their daily choices actually cost the planet. A 50 km drive, an old refrigerator running all year, a bag of groceries — all of these have a carbon price, but nobody talks about it in a language ordinary people understand. EcoTracker changes that.
+
+
+[0:20 — WHAT IT IS]
+
+EcoTracker is an AI-powered carbon footprint advisor built on Google ADK 2.0. It lives in the "Agents for Good" track — meaning the goal isn't profit, it's planet. You talk to it like you'd talk to a knowledgeable friend, describe what you did today, and it tells you the carbon cost and what you can do differently.
+
+(pause)
+
+
+[0:40 — SHOW THE BANNER]
+
+(show assets/cover_page_banner.png)
+
+At a glance: EcoTracker is conversational, secure, and data-driven. It combines a multi-agent AI pipeline with real emission data tools and a human-in-the-loop approval step — all running locally on your machine with a single command.
+
+(pause)
+
+
+[1:00 — ARCHITECTURE]
+
+(show assets/architecture_diagram.png)
+
+Let me walk you through the workflow, node by node.
+
+Every message first hits the security_checkpoint. This node scrubs personally identifiable information — emails, phone numbers, street addresses — before any LLM ever sees the input. It also blocks prompt injection attempts and credential keywords, and it writes a structured audit log for every decision.
+
+If the message passes, it goes to the orchestrator_agent — a Gemini-powered LLM that decides what to do. The orchestrator calls two specialist sub-agents as tools.
+
+The first is the footprint_calculator_agent. It uses the get_transit_emissions and get_appliance_efficiency tools from our local MCP server to calculate an accurate CO2 equivalent figure in kilograms.
+
+The second is the swap_recommender_agent. It uses get_appliance_efficiency and get_waste_offset to generate two or three specific, data-backed eco-swap suggestions tailored to the user's activity.
+
+Both sub-agents write their results directly into the session state, so the orchestrator can always read and synthesize them.
+
+After the orchestrator finishes, the post_process_node checks: did the user ask to log or save their footprint? If yes, the workflow pauses at the hitl_approval_node — that's our Human-in-the-Loop step. The agent asks: "Do you want to log this calculation to your profile?" and waits for a yes or no before continuing.
+
+If no logging was requested, it routes straight to the final_output_node, which assembles the complete response and delivers it.
+
+(pause)
+
+
+[2:00 — LIVE DEMO]
+
+(switch to playground at http://localhost:18081)
+
+Let me show you three real queries.
+
+First — the standard footprint calculation:
+
+I type: "Calculate my carbon footprint for a 50 km drive in a gasoline car, and suggest how I can reduce it."
+
+Watch the security checkpoint pass — no PII detected. The orchestrator calls the footprint calculator, which queries the MCP server and returns 9.6 kilograms of CO2 equivalent — that's 50 km multiplied by 192 grams per kilometre for a gasoline car. Then the swap recommender fires, and suggests switching to a train — which cuts that to just 2 kilograms — or going electric.
+
+(pause)
+
+Second — let me test the distance regex fix. I type: "I commute 15 km each way to work, what's my weekly carbon footprint?"
+
+Notice that "15 km" does NOT trigger the address detector. The updated regex uses a negative lookahead to exclude distance units, so the query passes cleanly through security and gets a proper answer: about 28.8 kilograms CO2 equivalent per week, with transit alternatives shown.
+
+(pause)
+
+Third — the Human-in-the-Loop flow. I type: "How much do I offset by recycling 50 plastic bottles? Log this to my profile."
+
+The word "log" triggers the HITL route. The workflow pauses and asks: "Do you want to log this carbon footprint calculation to your profile?" I type "yes" — and the agent resumes, records the log status, and delivers the final response including confirmation.
+
+(pause)
+
+
+[3:00 — SECURITY AND MCP]
+
+Two things I want to highlight separately.
+
+Security: every single query goes through the security_checkpoint before any LLM call. PII is redacted in place. Prompt injections — like "ignore all previous instructions" — are blocked immediately. Every decision emits a structured JSON audit log to stdout, so you have a full trail.
+
+MCP: the local FastMCP server runs as a subprocess and exposes three domain-specific tools — get_transit_emissions, get_appliance_efficiency, and get_waste_offset. These give the agents access to real emission factor data rather than relying on the LLM to guess numbers. That's the difference between an accurate answer and a hallucinated one.
+
+(pause)
+
+
+[3:30 — IMPACT AND CLOSE]
+
+EcoTracker is for anyone who wants to understand and reduce their environmental footprint — individuals tracking daily habits, schools running sustainability programmes, or apps building eco-awareness features on top of an AI backend.
+
+It demonstrates every core ADK capability: multi-agent orchestration, MCP integration, security-first design, Human-in-the-Loop confirmation, and session state sharing — all in a project with genuine real-world value.
+
+Thank you.
