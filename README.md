@@ -2,12 +2,16 @@
 
 ![EcoTracker Cover Banner](assets/cover_page_banner.png)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-ecotracker--hjj5.onrender.com-success?style=for-the-badge&logo=render)](https://ecotracker-hjj5.onrender.com)
 [![Google ADK 2.0](https://img.shields.io/badge/Google%20ADK-2.0-4285F4?style=flat-square&logo=google)](https://adk.dev/)
 [![FastMCP](https://img.shields.io/badge/MCP-FastMCP-10B981?style=flat-square)](https://github.com/jlowin/fastmcp)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Tests Passing](https://img.shields.io/badge/pytest-20%2F20%20passed-brightgreen?style=flat-square&logo=pytest)](tests/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](Dockerfile)
-[![Render Deploy](https://img.shields.io/badge/Render-Deploy%20Ready-46E3B7?style=flat-square&logo=render)](render.yaml)
+
+> 🚀 **Live Production Deployment:** **[https://ecotracker-hjj5.onrender.com](https://ecotracker-hjj5.onrender.com)**  
+> **Google ADK 2.0 Hackathon — Track 1: Agents for Good**  
+> An autonomous, enterprise-grade AI carbon intelligence agent that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
 
 ---
 
@@ -143,17 +147,13 @@ tests/test_workflow.py::test_post_process_node_auto_approved PASSED      [100%]
 
 ---
 
-## ☁️ 1-Click Cloud Deployment
+## ☁️ Live Cloud Deployment
 
-Deploy EcoTracker to the cloud for free with **Render**:
+EcoTracker is deployed live in production on Render:
 
-1. Push your changes to your GitHub repository:
-   ```bash
-   git push -u origin master
-   ```
-2. Navigate to [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints).
-3. Connect your `ecotracker-` repository.
-4. Render automatically builds the multi-stage [Dockerfile](Dockerfile) and assigns a secure live URL (`https://ecotracker.onrender.com`).
+👉 **[https://ecotracker-hjj5.onrender.com](https://ecotracker-hjj5.onrender.com)**
+
+Continuous deployment is active via [render.yaml](render.yaml) and [Dockerfile](Dockerfile). Any future updates pushed to `origin/master` automatically rebuild and redeploy within 60 seconds.
 
 ---
 
