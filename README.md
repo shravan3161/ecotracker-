@@ -12,16 +12,7 @@
 > 🚀 **Live Production Deployment:** **[https://ecotracker-hjj5.onrender.com](https://ecotracker-hjj5.onrender.com)**  
 > An autonomous, enterprise-grade AI carbon intelligence platform that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
 
-⚡ TL;DR
-EcoTracker is a conversational AI agent that estimates your carbon footprint and suggests greener alternatives. It was built for a “Track 1: Agents for Good” submission using Google ADK 2.0 and Gemini.
 
-What it does: You describe an activity (a 50 km drive, an old fridge, recycling 50 bottles) and it returns kg CO2e plus 2–3 eco-swap suggestions.
-Architecture: Multi-agent workflow in app/agent.py, with a local FastMCP server (mcp_server.py) exposing three tools: transit emissions, appliance efficiency, and waste offset.
-Security layer: Before any LLM call, it runs regex PII scrubbing, keyword-based prompt-injection blocking, and a credential filter, with audit logs to stdout.
-Human-in-the-loop: It pauses for confirmation before logging anything to a user profile.
-Run it: Python 3.11–3.13, uv sync, add a Gemini API key to .env, then uv run adk web app. The README recommends gemini-2.5-flash-lite for the free tier.
-State of the repo: Small and early, with 4 commits, 0 stars and no license. It includes a demo script and a submission writeup. The README lists a tests/ folder, but it doesn’t appear in the root file listing, so it may be missing.
-Limitations: Injection and credential detection is keyword-based, so it’s easy to bypass. The emission data comes from a local MCP server, so how “real” the factors are depends on what’s hardcoded there.
 ---
 
 ## 🌟 Highlights & Core Capabilities
