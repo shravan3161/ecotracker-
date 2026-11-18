@@ -14,17 +14,13 @@
 
 """EcoTracker Enterprise Customer SaaS Platform.
 
-Production-grade real-time sustainability intelligence platform featuring:
-- Conversational AI Carbon Chatbot with multi-turn context memory
-- Multi-layer Enterprise Security Guardrails (Prompt Injection, XSS, SQLi, PII, Credential Filtering)
-- Dynamic, scientifically grounded carbon reasoning & multi-item calculations
-- Free Cloud LLM integration (Google Gemini 2.5 & Groq LLaMA 3.3)
-- Multi-tenant customer session isolation with SQLite persistence
-- Interactive Chart.js analytics (category doughnut chart & emissions trend)
-- 1-Click Eco Habits Studio & Interactive Daily Budget Slider
-- Interactive Carbon Offset Simulator with Gold Standard projects
-- Granular Activity History management (individual record deletion & full history reset)
-- CSV reporting for corporate sustainability audits & tax reporting
+Clean, high-end Linear/Vercel-inspired App Shell design:
+- Uncluttered Sidebar Navigation (Chatbot, Analytics, Habits, History, Offsets)
+- True Multi-turn Conversational AI Carbon Chatbot
+- Interactive Chart.js category analytics & live budget progress
+- One-click daily habit presets with celebratory confetti
+- Granular SQLite data management (individual record deletion & full wipe)
+- Enterprise multi-layer security checkpoint
 """
 
 import os
@@ -196,7 +192,7 @@ async def chat_handler(req: ChatRequest):
             "success": False,
             "security_blocked": True,
             "rejection_reason": sec_res.rejection_reason,
-            "reply": f"🚨 **Security Threat Blocked:** {sec_res.rejection_reason}\n\n*This input was intercepted and logged to the enterprise security audit stream.*",
+            "reply": f"🚨 **Security Threat Blocked:** {sec_res.rejection_reason}\n\n*Action intercepted and logged to enterprise security audit stream.*",
             "audit_log": sec_res.audit_event
         })
 
@@ -228,7 +224,7 @@ async def chat_handler(req: ChatRequest):
             "audit_log": sec_res.audit_event
         })
 
-    # 3. Try Cloud LLM Generation if Key is Provided (with multi-turn history)
+    # 3. Try Cloud LLM Generation if Key is Provided
     llm_output = await generate_llm_response(clean_text, custom_key=req.api_key, history=req.history)
     if llm_output:
         reply_content = llm_output
@@ -259,9 +255,8 @@ async def chat_handler(req: ChatRequest):
         badge_notice = f" 🏅 *Unlocked: {', '.join(rec.get('new_badges', []))}!*" if rec.get("new_badges") else ""
         reply_content += f"\n\n---\n*✅ Confirmed & saved to your personal dashboard (Log #{rec['id']}).{badge_notice}*"
 
-    # Append subtle privacy notice if PII was scrubbed
     if sec_res.pii_redacted:
-        reply_content += "\n\n*(🛡️ Notice: Sensitive personal data like email/phone/address was redacted for your privacy)*"
+        reply_content += "\n\n*(🛡️ Notice: Sensitive personal data like email/phone was redacted for privacy)*"
 
     return JSONResponse(content={
         "success": True,
@@ -281,7 +276,7 @@ def index():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTracker — Enterprise Carbon Intelligence SaaS</title>
+    <title>EcoTracker — Enterprise Sustainability Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -293,124 +288,204 @@ def index():
             --primary-glow: rgba(16, 185, 129, 0.4);
             --primary-light: #34d399;
             --primary-dark: #059669;
-            --bg-color: #070c18;
-            --bg-gradient: radial-gradient(circle at 10% 10%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
-                           radial-gradient(circle at 90% 90%, rgba(6, 182, 212, 0.10) 0%, transparent 45%),
-                           #070c18;
-            --card-bg: rgba(15, 23, 42, 0.78);
+            --bg-body: #080d19;
+            --sidebar-bg: #0b1120;
+            --card-bg: rgba(15, 23, 42, 0.85);
             --card-border: rgba(255, 255, 255, 0.08);
-            --card-hover: rgba(255, 255, 255, 0.14);
+            --card-hover: rgba(255, 255, 255, 0.16);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent-cyan: #06b6d4;
             --accent-purple: #a855f7;
-            --accent-gold: #f59e0b;
             --danger: #ef4444;
             --danger-glow: rgba(239, 68, 68, 0.35);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
-            background: var(--bg-gradient);
+            background: var(--bg-body);
             color: var(--text-main);
-            min-height: 100vh;
-            padding: 24px;
-            line-height: 1.5;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
-        .container { max-width: 1340px; margin: 0 auto; }
 
-        /* Glassmorphism Surface */
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55);
-            transition: all 0.25s ease;
-        }
-        .glass-card:hover { border-color: var(--card-hover); }
-
-        /* Navigation Header */
-        header {
+        /* App Shell Layout */
+        .app-shell {
             display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* Sidebar Rail */
+        aside.sidebar {
+            width: 270px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
-            padding: 16px 28px;
-            margin-bottom: 24px;
+            padding: 22px 18px;
+            flex-shrink: 0;
         }
         .brand {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-left: 6px;
         }
         .brand-icon {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(16,185,129,0.25), rgba(6,182,212,0.25));
-            border: 1px solid rgba(16,185,129,0.4);
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(6,182,212,0.3));
+            border: 1px solid rgba(16,185,129,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 0 18px var(--primary-glow);
+            font-size: 20px;
+            box-shadow: 0 0 16px var(--primary-glow);
         }
         .brand-text h1 {
-            font-size: 22px;
+            font-size: 19px;
             font-weight: 800;
             letter-spacing: -0.02em;
             background: linear-gradient(135deg, #ffffff 40%, #a7f3d0 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .brand-text p {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
+        .brand-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            margin-left: 6px;
         }
-        .header-actions {
+
+        /* Nav List */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            list-style: none;
+        }
+        .nav-item button {
+            width: 100%;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .user-chip {
+        .nav-item button:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .nav-item button.active {
+            background: rgba(16, 185, 129, 0.14);
+            border-color: rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            border-top: 1px solid var(--card-border);
+            padding-top: 16px;
+        }
+        .user-switch-box {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--card-border);
-            padding: 6px 14px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
-        .user-chip input {
+        .user-switch-box input {
             background: transparent;
             border: none;
             color: #fff;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
             outline: none;
-            width: 130px;
+            width: 100%;
+        }
+
+        /* Main Workspace */
+        main.main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            background: radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.07) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.06) 0%, transparent 45%),
+                        var(--bg-body);
+        }
+
+        /* Top Action Bar */
+        .top-action-bar {
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11, 17, 32, 0.6);
+            backdrop-filter: blur(16px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .view-title-group h2 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #fff;
+        }
+        .view-title-group p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .top-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .btn-action {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--card-border);
             background: rgba(255, 255, 255, 0.04);
             color: var(--text-main);
+            transition: all 0.2s;
         }
         .btn-action:hover {
             background: rgba(255, 255, 255, 0.09);
-            border-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
         }
         .btn-danger-outline {
@@ -424,15 +499,215 @@ def index():
             color: #fff;
         }
 
-        /* KPI Executive Grid */
+        /* View Containers */
+        .content-body {
+            padding: 28px 32px 60px;
+            flex: 1;
+        }
+        .tab-view { display: none; }
+        .tab-view.active { display: block; animation: fadeIn 0.2s ease; }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* View 1: Chatbot Interface */
+        .chat-full-view {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 160px);
+        }
+        .chat-stream {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-msg-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            animation: fadeIn 0.2s ease;
+        }
+        .chat-msg-row.user { flex-direction: row-reverse; }
+        .chat-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .avatar-bot {
+            background: linear-gradient(135deg, rgba(16,185,129,0.35), rgba(6,182,212,0.35));
+            border: 1px solid rgba(16,185,129,0.5);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .avatar-user {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: 1px solid rgba(59,130,246,0.6);
+        }
+        .msg-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 82%;
+        }
+        .chat-msg-row.user .msg-wrapper { align-items: flex-end; }
+        .msg-bubble {
+            padding: 13px 18px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .msg-user {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .msg-agent {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f1f5f9;
+            border-bottom-left-radius: 4px;
+        }
+        .msg-time {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+        
+        /* Security Alert Box */
+        .security-alert-box {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fecaca;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+            animation: shake 0.35s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
+        .security-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .security-alert-body { font-size: 13px; line-height: 1.5; color: #f87171; }
+        .security-alert-meta {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .chat-action-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .chat-action-btn {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chat-action-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .typing-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+        }
+        .typing-dot {
+            width: 6px; height: 6px;
+            background: #34d399;
+            border-radius: 50%;
+            animation: bounceDot 1.2s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounceDot {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1.1); opacity: 1; }
+        }
+        .prompt-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0;
+        }
+        .prompt-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .prompt-pill:hover {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #fff;
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .chat-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); }
+
+        /* View 2: Analytics & Budget Grid */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 18px;
             margin-bottom: 24px;
         }
         .metric-card {
-            padding: 22px 26px;
+            padding: 22px 24px;
             position: relative;
             overflow: hidden;
         }
@@ -454,12 +729,11 @@ def index():
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
         }
         .metric-value {
             font-size: 30px;
             font-weight: 800;
-            letter-spacing: -0.02em;
             color: #fff;
             margin-bottom: 6px;
         }
@@ -488,63 +762,45 @@ def index():
             accent-color: var(--primary);
             cursor: pointer;
         }
-
-        /* 2-Column Split: Analytics & Eco Habits Studio */
-        .analytics-habits-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .chart-card-full {
+            padding: 24px 28px;
             margin-bottom: 24px;
         }
-        @media (max-width: 900px) {
-            .analytics-habits-split { grid-template-columns: 1fr; }
-        }
-        .chart-container {
+        .chart-box {
+            height: 280px;
             position: relative;
-            height: 220px;
-            width: 100%;
         }
 
-        /* Eco Habits Studio Preset Cards */
+        /* View 3: Eco Habits Studio */
         .habits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
         }
         .habit-btn {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 12px 10px;
-            text-align: center;
+            border-radius: 14px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
         .habit-btn:hover {
             background: rgba(16, 185, 129, 0.12);
             border-color: rgba(16, 185, 129, 0.45);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
         }
-        .habit-icon { font-size: 24px; margin-bottom: 4px; display: block; }
-        .habit-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .habit-impact { font-size: 11px; color: var(--primary-light); font-weight: 600; }
+        .habit-icon { font-size: 32px; }
+        .habit-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .habit-impact { font-size: 12px; color: var(--primary-light); font-weight: 600; }
 
-        /* 2-Column Split: Calculator & AI Consultant */
-        .workspace-split {
-            display: grid;
-            grid-template-columns: 1fr 1.15fr;
-            gap: 24px;
-            margin-bottom: 26px;
-        }
-        @media (max-width: 1024px) {
-            .workspace-split { grid-template-columns: 1fr; }
-        }
-
-        /* FastMCP Calculator Studio */
-        .studio-card { padding: 24px 28px; }
+        /* Calculator Form */
+        .calc-form-card { padding: 26px 28px; }
         .calc-tabs {
             display: flex;
             gap: 8px;
@@ -563,7 +819,7 @@ def index():
             cursor: pointer;
             transition: all 0.2s;
         }
-        .calc-tab:hover { color: #fff; background: rgba(255, 255, 255, 0.04); }
+        .calc-tab:hover { color: #fff; }
         .calc-tab.active {
             background: rgba(16, 185, 129, 0.15);
             border-color: rgba(16, 185, 129, 0.35);
@@ -577,7 +833,6 @@ def index():
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
         }
         .form-select, .form-input {
             width: 100%;
@@ -588,12 +843,8 @@ def index():
             color: #fff;
             font-size: 14px;
             outline: none;
-            transition: all 0.2s;
         }
-        .form-select:focus, .form-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary-glow);
-        }
+        .form-select:focus, .form-input:focus { border-color: var(--primary); }
         .preview-box {
             background: rgba(7, 12, 24, 0.65);
             border: 1px solid rgba(16, 185, 129, 0.25);
@@ -616,236 +867,9 @@ def index():
             box-shadow: 0 4px 16px var(--primary-glow);
             transition: all 0.2s;
         }
-        .btn-calc:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        /* Conversational AI Chatbot Card */
-        .chat-card {
-            padding: 22px 24px;
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-        }
-        .chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--card-border);
-        }
-        .chat-bot-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-stream {
-            flex: 1;
-            overflow-y: auto;
-            padding: 14px;
-            background: rgba(7, 12, 24, 0.65);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .chat-msg-row {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            animation: fadeIn 0.25s ease;
-        }
-        .chat-msg-row.user { flex-direction: row-reverse; }
-        .chat-avatar {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            flex-shrink: 0;
-        }
-        .avatar-bot {
-            background: linear-gradient(135deg, rgba(16,185,129,0.35), rgba(6,182,212,0.35));
-            border: 1px solid rgba(16,185,129,0.5);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-        .avatar-user {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border: 1px solid rgba(59,130,246,0.6);
-        }
-        .msg-wrapper {
-            display: flex;
-            flex-direction: column;
-            max-width: 82%;
-        }
-        .chat-msg-row.user .msg-wrapper { align-items: flex-end; }
-        .msg-bubble {
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 13.5px;
-            line-height: 1.55;
-        }
-        .msg-user {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #fff;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-        }
-        .msg-agent {
-            background: rgba(30, 41, 59, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #f1f5f9;
-            border-bottom-left-radius: 4px;
-        }
-        .msg-time {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            padding: 0 4px;
-        }
-        
-        /* Security Alert Box inside Chat */
-        .security-alert-box {
-            background: rgba(239, 68, 68, 0.12);
-            border: 1px solid rgba(239, 68, 68, 0.45);
-            border-radius: 12px;
-            padding: 14px 16px;
-            color: #fecaca;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-            animation: shake 0.35s ease-in-out;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-4px); }
-            40%, 80% { transform: translateX(4px); }
-        }
-        .security-alert-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ef4444;
-            font-weight: 700;
-            font-size: 13px;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .security-badge-icon { font-size: 16px; }
-        .security-alert-body { font-size: 12.5px; line-height: 1.5; color: #f87171; }
-        .security-alert-meta {
-            font-size: 10.5px;
-            color: #94a3b8;
-            margin-top: 8px;
-            padding-top: 6px;
-            border-top: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .chat-action-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 10px;
-        }
-        .chat-action-btn {
-            background: rgba(16, 185, 129, 0.14);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            color: #34d399;
-            padding: 5px 11px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .chat-action-btn:hover {
-            background: rgba(16, 185, 129, 0.28);
-            color: #fff;
-            transform: translateY(-1px);
-        }
-        .typing-dots {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 6px 10px;
-        }
-        .typing-dot {
-            width: 6px; height: 6px;
-            background: #34d399;
-            border-radius: 50%;
-            animation: bounceDot 1.2s infinite ease-in-out;
-        }
-        .typing-dot:nth-child(1) { animation-delay: 0s; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounceDot {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-            40% { transform: scale(1.1); opacity: 1; }
-        }
-        .prompt-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-        .prompt-pill {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 5px 11px;
-            border-radius: 999px;
-            font-size: 11.5px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .prompt-pill:hover {
-            background: rgba(16, 185, 129, 0.12);
-            border-color: rgba(16, 185, 129, 0.4);
-            color: #fff;
-        }
-        .chat-input-row {
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input {
-            flex: 1;
-            padding: 13px 16px;
-            background: rgba(7, 12, 24, 0.85);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-        }
-        .chat-input:focus { border-color: var(--primary); }
-
-        /* Interactive Carbon Offset Simulator */
-        .offset-card { padding: 24px 28px; margin-bottom: 24px; }
-        .offset-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 16px;
-            margin-top: 18px;
-        }
-        .project-card {
-            background: rgba(7, 12, 24, 0.65);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-        .project-card:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* Activity History Table */
-        .history-card { padding: 24px 28px; margin-bottom: 26px; }
+        /* View 4: Activity History Table */
+        .history-card { padding: 24px 28px; }
         .table-controls {
             display: flex;
             justify-content: space-between;
@@ -854,10 +878,7 @@ def index():
             flex-wrap: wrap;
             gap: 12px;
         }
-        .search-box {
-            position: relative;
-            min-width: 260px;
-        }
+        .search-box { position: relative; min-width: 260px; }
         .search-input {
             width: 100%;
             padding: 9px 14px 9px 34px;
@@ -893,11 +914,7 @@ def index():
             color: #fff;
             border-color: rgba(255, 255, 255, 0.3);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
         th {
             text-align: left;
             padding: 12px 14px;
@@ -942,6 +959,25 @@ def index():
             background: var(--danger-glow);
             border-color: rgba(239, 68, 68, 0.3);
         }
+
+        /* View 5: Carbon Offsets */
+        .offset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+        .project-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .project-card:hover { border-color: rgba(56, 189, 248, 0.4); transform: translateY(-2px); }
 
         /* Modal Dialog */
         .modal-overlay {
@@ -989,299 +1025,346 @@ def index():
             animation: slideIn 0.3s ease;
         }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Top Navbar -->
-        <header class="glass-card">
-            <div class="brand">
-                <div class="brand-icon">🌱</div>
-                <div class="brand-text">
-                    <h1>EcoTracker Platform</h1>
-                    <p>Live Sustainability Intelligence • Verified FastMCP Factors</p>
+    <div class="app-shell">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div>
+                <div class="brand">
+                    <div class="brand-icon">🌱</div>
+                    <div class="brand-text">
+                        <h1>EcoTracker<span class="brand-badge">SaaS</span></h1>
+                    </div>
                 </div>
+
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <button class="active" id="nav-chat" onclick="switchNav('chat')">
+                            <span class="nav-left">💬 AI Carbon Chat</span>
+                            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(16,185,129,0.2); color: #34d399;">Bot</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="nav-analytics" onclick="switchNav('analytics')">
+                            <span class="nav-left">📊 Analytics & Goals</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="nav-habits" onclick="switchNav('habits')">
+                            <span class="nav-left">⚡ Habits & Calculator</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="nav-history" onclick="switchNav('history')">
+                            <span class="nav-left">📋 Activity History</span>
+                            <span id="nav-history-count" style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); color: #94a3b8;">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button id="nav-offsets" onclick="switchNav('offsets')">
+                            <span class="nav-left">🌍 Carbon Offsets</span>
+                        </button>
+                    </li>
+                </ul>
             </div>
-            <div class="header-actions">
-                <div class="user-chip">
+
+            <div class="sidebar-footer">
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 700;">Customer Session</div>
+                <div class="user-switch-box">
                     <span>👤</span>
-                    <input type="text" id="user-id-input" value="default_customer" title="Switch Customer ID" placeholder="Customer ID">
+                    <input type="text" id="user-id-input" value="default_customer" placeholder="Customer ID" title="Switch customer account">
                 </div>
-                <button class="btn-action" onclick="openKeyModal()">⚙️ Cloud LLM Config</button>
-                <button class="btn-action" onclick="exportDataCSV()">📥 Export CSV</button>
-                <button class="btn-action btn-danger-outline" onclick="openResetModal()">🗑️ Reset History</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-action" style="flex: 1; justify-content: center; font-size: 11.5px;" onclick="openKeyModal()">⚙️ Cloud API Key</button>
+                </div>
             </div>
-        </header>
+        </aside>
 
-        <!-- KPI Metrics Grid -->
-        <div class="metrics-grid">
-            <div class="glass-card metric-card">
-                <div class="metric-header">
-                    <span class="metric-title">Total Emissions</span>
-                    <span>📈</span>
+        <!-- Main Content Canvas -->
+        <main class="main-content">
+            <!-- Top Action Header -->
+            <div class="top-action-bar">
+                <div class="view-title-group">
+                    <h2 id="current-view-title">AI Carbon Chatbot</h2>
+                    <p id="current-view-subtitle">Interactive conversational advisor with real-time carbon intelligence</p>
                 </div>
-                <div class="metric-value" id="kpi-emissions">0.0 <span>kg CO2e</span></div>
-                <div style="font-size: 12px; color: var(--text-muted);" id="kpi-count">0 verified activities</div>
-            </div>
-            <div class="glass-card metric-card">
-                <div class="metric-header">
-                    <span class="metric-title">Carbon Avoided</span>
-                    <span>🌱</span>
-                </div>
-                <div class="metric-value" style="color: #34d399;" id="kpi-saved">0.0 <span>kg CO2e</span></div>
-                <div style="font-size: 12px; color: #34d399;">Through verified eco-swaps</div>
-            </div>
-            <div class="glass-card metric-card">
-                <div class="metric-header">
-                    <span class="metric-title">Daily Carbon Budget</span>
-                    <span>🎯</span>
-                </div>
-                <div class="metric-value" id="kpi-budget">0% <span>utilized</span></div>
-                <div class="budget-bar">
-                    <div class="budget-fill" id="budget-fill" style="width: 0%;"></div>
-                </div>
-                <div class="budget-slider-wrapper">
-                    <span style="font-size: 11px; color: var(--text-muted);">Goal:</span>
-                    <input type="range" class="budget-slider" id="budget-slider" min="2" max="30" step="0.5" value="10" onchange="updateDailyBudget(this.value)" oninput="document.getElementById('budget-val-disp').innerText = this.value + ' kg'">
-                    <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8;" id="budget-val-disp">10 kg</span>
-                </div>
-            </div>
-            <div class="glass-card metric-card">
-                <div class="metric-header">
-                    <span class="metric-title">Unlocked Badges</span>
-                    <span>🏅</span>
-                </div>
-                <div class="metric-value" id="kpi-badges">0</div>
-                <div style="font-size: 12px; color: #a78bfa;" id="kpi-badge-desc">Start logging to earn badges</div>
-            </div>
-        </div>
-
-        <!-- 2-Column Split: Visual Analytics & Eco Habits Studio -->
-        <div class="analytics-habits-split">
-            <!-- Left: Interactive Visual Analytics -->
-            <div class="glass-card" style="padding: 22px 26px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 style="font-size: 16px; font-weight: 700;">Emission Analytics</h3>
-                    <span style="font-size: 11px; color: var(--text-muted);">Live Breakdown</span>
-                </div>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
+                <div class="top-buttons">
+                    <span style="font-size: 11.5px; padding: 4px 10px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;" id="llm-status-pill">
+                        ⚡ Dynamic Chatbot
+                    </span>
+                    <button class="btn-action" onclick="exportDataCSV()">📥 Export CSV</button>
+                    <button class="btn-action btn-danger-outline" onclick="openResetModal()">🗑️ Reset</button>
                 </div>
             </div>
 
-            <!-- Right: One-Click Eco Habits Studio -->
-            <div class="glass-card" style="padding: 22px 26px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <h3 style="font-size: 16px; font-weight: 700;">Eco Habits Studio</h3>
-                    <span style="font-size: 11px; color: #34d399; font-weight: 600;">⚡ 1-Click Fast Log</span>
-                </div>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Tap any daily habit to instantly log verified carbon impact.</p>
-                <div class="habits-grid">
-                    <div class="habit-btn" onclick="quickLogHabit('Morning Coffee', 'diet', 0.28, 0.0)">
-                        <span class="habit-icon">☕</span>
-                        <div class="habit-title">Coffee</div>
-                        <div class="habit-impact">+0.28 kg</div>
-                    </div>
-                    <div class="habit-btn" onclick="quickLogHabit('Electric Train (25 km)', 'transportation', 0.88, 3.92)">
-                        <span class="habit-icon">🚆</span>
-                        <div class="habit-title">Train Trip</div>
-                        <div class="habit-impact">-3.92 kg</div>
-                    </div>
-                    <div class="habit-btn" onclick="quickLogHabit('Plant-Based Lunch', 'diet', 0.40, 4.50)">
-                        <span class="habit-icon">🥗</span>
-                        <div class="habit-title">Vegan Bowl</div>
-                        <div class="habit-impact">-4.50 kg</div>
-                    </div>
-                    <div class="habit-btn" onclick="quickLogHabit('Bicycle Commute (10 km)', 'transportation', 0.0, 1.92)">
-                        <span class="habit-icon">🚲</span>
-                        <div class="habit-title">Bike Ride</div>
-                        <div class="habit-impact">-1.92 kg</div>
-                    </div>
-                    <div class="habit-btn" onclick="quickLogHabit('AC Eco-Mode (2 hrs)', 'energy', 0.60, 0.70)">
-                        <span class="habit-icon">❄️</span>
-                        <div class="habit-title">Eco AC</div>
-                        <div class="habit-impact">-0.70 kg</div>
-                    </div>
-                    <div class="habit-btn" onclick="quickLogHabit('Composted Food Scraps', 'waste', 0.0, 2.40)">
-                        <span class="habit-icon">♻️</span>
-                        <div class="habit-title">Compost</div>
-                        <div class="habit-impact">-2.40 kg</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2-Column Split: Calculator & AI Consultant -->
-        <div class="workspace-split">
-            <!-- Left: FastMCP Calculator Studio -->
-            <div class="glass-card studio-card">
-                <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 14px;">Instant Emission Calculator</h3>
-                <div class="calc-tabs">
-                    <button class="calc-tab active" onclick="switchTab('transit')">🚗 Transit</button>
-                    <button class="calc-tab" onclick="switchTab('diet')">🥗 Diet & Food</button>
-                    <button class="calc-tab" onclick="switchTab('appliance')">⚡ Appliances</button>
-                    <button class="calc-tab" onclick="switchTab('waste')">♻️ Waste</button>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" id="calc-item-label">Vehicle Mode</label>
-                    <select class="form-select" id="calc-item-select" onchange="runLiveCalculation()"></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" id="calc-qty-label">Distance (km)</label>
-                    <input type="number" class="form-input" id="calc-qty-input" value="40" min="1" step="any" oninput="runLiveCalculation()">
-                </div>
-                <div class="preview-box" id="calc-preview">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span style="font-weight: 700; color: #fff;" id="prev-title">Result</span>
-                        <span style="font-size: 18px; font-weight: 800; color: #38bdf8;" id="prev-co2">0.0 kg</span>
-                    </div>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="prev-swap"></p>
-                    <button class="btn-calc" onclick="saveCalculatorLog()">+ Log to My History</button>
-                </div>
-            </div>
-
-            <!-- Right: Conversational AI Carbon Chatbot -->
-            <div class="glass-card chat-card">
-                <div class="chat-header">
-                    <div class="chat-bot-profile">
-                        <div class="chat-avatar avatar-bot">🌱</div>
-                        <div>
-                            <div style="font-size: 14.5px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px;">
-                                EcoTracker AI Bot
-                                <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+            <div class="content-body">
+                <!-- VIEW 1: AI Carbon Chatbot (Dedicated & Clean) -->
+                <div class="tab-view active" id="view-chat">
+                    <div class="chat-full-view">
+                        <div class="glass-card chat-stream" id="chat-stream">
+                            <div class="chat-msg-row">
+                                <div class="chat-avatar avatar-bot">🌱</div>
+                                <div class="msg-wrapper">
+                                    <div class="msg-bubble msg-agent">
+                                        👋 <strong>Hello! I'm EcoTracker AI, your conversational sustainability chatbot.</strong><br><br>
+                                        Tell me about any activity—like driving to work, a flight, what you had for lunch, or home appliances you ran. I'll calculate your exact carbon footprint and suggest realistic, high-impact eco-swaps!<br><br>
+                                        <em>What activity would you like to explore?</em>
+                                    </div>
+                                    <span class="msg-time" id="welcome-time">Just now</span>
+                                </div>
                             </div>
-                            <div style="font-size: 11px; color: var(--text-muted);">Conversational Carbon Advisor • Online</div>
+                        </div>
+
+                        <div class="prompt-pills">
+                            <div class="prompt-pill" onclick="sendPrompt('👋 Hi! What can you do?')">👋 Hello!</div>
+                            <div class="prompt-pill" onclick="sendPrompt('I drove 45 km in a gasoline car, calculate carbon and log it')">🚗 45km Gasoline Commute</div>
+                            <div class="prompt-pill" onclick="sendPrompt('I had a 250g ribeye steak dinner and 2 beers')">🥩 250g Steak Dinner</div>
+                            <div class="prompt-pill" onclick="sendPrompt('Flew 1200 km domestic flight, suggest green alternatives')">✈️ 1200km Flight</div>
+                            <div class="prompt-pill" onclick="sendPrompt('Ran my AC for 6 hours today, how much carbon is that?')">❄️ 6 hrs AC Cooling</div>
+                        </div>
+
+                        <div class="chat-input-row">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Message EcoTracker AI (e.g. 'I drove 40 km' or 'Hi')..." onkeydown="if(event.key==='Enter') submitChat()">
+                            <button class="btn-action" style="background: var(--primary); color: #042f2e; font-weight: 700; padding: 0 24px;" onclick="submitChat()">Send ↵</button>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 11px; padding: 4px 8px; border-radius: 6px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;" id="llm-status-pill">
-                            ⚡ Dynamic Chatbot
-                        </span>
-                        <button class="btn-action" style="padding: 4px 10px; font-size: 11px;" onclick="clearChat()" title="Reset chat conversation">🧹 Clear</button>
-                    </div>
                 </div>
-                <div class="chat-stream" id="chat-stream">
-                    <!-- Initial Bot Message -->
-                    <div class="chat-msg-row">
-                        <div class="chat-avatar avatar-bot">🌱</div>
-                        <div class="msg-wrapper">
-                            <div class="msg-bubble msg-agent">
-                                👋 <strong>Hi! I'm EcoTracker AI, your conversational sustainability chatbot.</strong><br><br>
-                                Tell me about your day—like your commute, a flight, what you had for lunch, or home appliances you ran. I'll calculate your exact carbon footprint and suggest realistic, high-impact eco-swaps!<br><br>
-                                <em>What activity would you like to explore?</em>
+
+                <!-- VIEW 2: Analytics & Budget Overview -->
+                <div class="tab-view" id="view-analytics">
+                    <div class="metrics-grid">
+                        <div class="glass-card metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Total Emissions</span>
+                                <span>📈</span>
                             </div>
-                            <span class="msg-time" id="welcome-time">Just now</span>
+                            <div class="metric-value" id="kpi-emissions">0.0 <span>kg CO2e</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted);" id="kpi-count">0 verified activities</div>
+                        </div>
+                        <div class="glass-card metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Carbon Avoided</span>
+                                <span>🌱</span>
+                            </div>
+                            <div class="metric-value" style="color: #34d399;" id="kpi-saved">0.0 <span>kg CO2e</span></div>
+                            <div style="font-size: 12px; color: #34d399;">Through verified eco-swaps</div>
+                        </div>
+                        <div class="glass-card metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Daily Carbon Budget</span>
+                                <span>🎯</span>
+                            </div>
+                            <div class="metric-value" id="kpi-budget">0% <span>utilized</span></div>
+                            <div class="budget-bar">
+                                <div class="budget-fill" id="budget-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="budget-slider-wrapper">
+                                <span style="font-size: 11px; color: var(--text-muted);">Goal:</span>
+                                <input type="range" class="budget-slider" id="budget-slider" min="2" max="30" step="0.5" value="10" onchange="updateDailyBudget(this.value)" oninput="document.getElementById('budget-val-disp').innerText = this.value + ' kg'">
+                                <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8;" id="budget-val-disp">10 kg</span>
+                            </div>
+                        </div>
+                        <div class="glass-card metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Unlocked Badges</span>
+                                <span>🏅</span>
+                            </div>
+                            <div class="metric-value" id="kpi-badges">0</div>
+                            <div style="font-size: 12px; color: #a78bfa;" id="kpi-badge-desc">Start logging to earn badges</div>
                         </div>
                     </div>
-                </div>
-                <div class="prompt-pills">
-                    <div class="prompt-pill" onclick="sendPrompt('👋 Hi! What can you do?')">👋 Hello!</div>
-                    <div class="prompt-pill" onclick="sendPrompt('I drove 45 km in a gasoline car, calculate carbon and log it')">🚗 45km Gasoline Commute</div>
-                    <div class="prompt-pill" onclick="sendPrompt('I had a 250g ribeye steak dinner and 2 beers')">🥩 250g Steak Dinner</div>
-                    <div class="prompt-pill" onclick="sendPrompt('Flew 1200 km domestic flight, suggest green alternatives')">✈️ 1200km Flight</div>
-                    <div class="prompt-pill" onclick="sendPrompt('Ran my AC for 6 hours today, how much carbon is that?')">❄️ 6 hrs AC Cooling</div>
-                </div>
-                <div class="chat-input-row">
-                    <input type="text" class="chat-input" id="chat-input" placeholder="Message EcoTracker AI (e.g., 'I drove 40 km' or 'Hi')..." onkeydown="if(event.key==='Enter') submitChat()">
-                    <button class="btn-action" style="background: var(--primary); color: #042f2e; font-weight: 700; padding: 0 20px;" onclick="submitChat()">Send ↵</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Interactive Carbon Offset Simulator & Project Directory -->
-        <div class="glass-card offset-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                <div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Verified Carbon Offset Directory</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);">Balance residual emissions through certified Gold Standard & Verra VCS projects.</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 12px; background: rgba(7, 12, 24, 0.7); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--card-border);">
-                    <span style="font-size: 12px; color: var(--text-muted);">Offset Simulator:</span>
-                    <input type="range" min="10" max="500" step="10" value="100" style="accent-color: #38bdf8;" oninput="updateOffsetSim(this.value)">
-                    <span style="font-size: 13px; font-weight: 700; color: #38bdf8;" id="offset-amount-disp">100 kg (~5 trees, $3.00)</span>
-                </div>
-            </div>
-            <div class="offset-grid">
-                <div class="project-card">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">Gold Standard #GS1284</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #fff;">$15 / ton</span>
+                    <div class="glass-card chart-card-full">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 style="font-size: 16px; font-weight: 700;">Emissions Breakdown by Category</h3>
+                            <span style="font-size: 12px; color: var(--text-muted);">Real-Time Distribution</span>
                         </div>
-                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">🌳 Rimba Raya Biodiversity Peatland</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
-                            Protects 65,000 hectares of tropical peat swamp in Borneo, preserving endangered orangutan habitats and sequestering millions of tons of CO2.
-                        </p>
-                    </div>
-                    <a href="https://www.goldstandard.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
-                </div>
-                <div class="project-card">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 700;">Verra VCS #VCS921</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #fff;">$12 / ton</span>
+                        <div class="chart-box">
+                            <canvas id="categoryChart"></canvas>
                         </div>
-                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">💨 Oaxaca Wind Energy Project</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
-                            102 MW clean wind farm in southern Mexico displacing fossil fuels and powering 180,000 homes annually with zero emissions.
-                        </p>
                     </div>
-                    <a href="https://registry.verra.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
                 </div>
-                <div class="project-card">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 700;">Blue Carbon Certified</span>
-                            <span style="font-size: 13px; font-weight: 700; color: #fff;">$18 / ton</span>
-                        </div>
-                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">🌊 Coastal Mangrove Restoration</h4>
-                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
-                            Restoring degraded tidal mangrove forests along the Kenyan coast, sequestering carbon up to 4x faster than terrestrial rainforests.
-                        </p>
-                    </div>
-                    <a href="https://www.goldstandard.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
-                </div>
-            </div>
-        </div>
 
-        <!-- Activity History & Granular Deletion Table -->
-        <div class="glass-card history-card">
-            <div class="table-controls">
-                <div>
-                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">Verified Activity History</h3>
-                    <p style="font-size: 12px; color: var(--text-muted);">Inspect, filter, or delete individual customer logs in real-time.</p>
-                </div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" class="search-input" id="search-input" placeholder="Filter activities..." oninput="renderTable()">
+                <!-- VIEW 3: 1-Click Habits & FastMCP Calculator -->
+                <div class="tab-view" id="view-habits">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Eco Habits Studio</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Tap any daily habit to instantly log verified emissions with 1 click.</p>
+                    
+                    <div class="habits-grid">
+                        <div class="habit-btn" onclick="quickLogHabit('Morning Coffee', 'diet', 0.28, 0.0)">
+                            <span class="habit-icon">☕</span>
+                            <div>
+                                <div class="habit-title">Morning Coffee</div>
+                                <div class="habit-impact">+0.28 kg CO2e</div>
+                            </div>
+                        </div>
+                        <div class="habit-btn" onclick="quickLogHabit('Electric Train (25 km)', 'transportation', 0.88, 3.92)">
+                            <span class="habit-icon">🚆</span>
+                            <div>
+                                <div class="habit-title">Train Commute (25 km)</div>
+                                <div class="habit-impact">-3.92 kg CO2e avoided</div>
+                            </div>
+                        </div>
+                        <div class="habit-btn" onclick="quickLogHabit('Plant-Based Lunch Bowl', 'diet', 0.40, 4.50)">
+                            <span class="habit-icon">🥗</span>
+                            <div>
+                                <div class="habit-title">Plant-Based Lunch</div>
+                                <div class="habit-impact">-4.50 kg CO2e avoided</div>
+                            </div>
+                        </div>
+                        <div class="habit-btn" onclick="quickLogHabit('Bicycle Commute (10 km)', 'transportation', 0.0, 1.92)">
+                            <span class="habit-icon">🚲</span>
+                            <div>
+                                <div class="habit-title">Bicycle Ride (10 km)</div>
+                                <div class="habit-impact">-1.92 kg CO2e avoided</div>
+                            </div>
+                        </div>
+                        <div class="habit-btn" onclick="quickLogHabit('AC Eco-Scheduling (2 hrs)', 'energy', 0.60, 0.70)">
+                            <span class="habit-icon">❄️</span>
+                            <div>
+                                <div class="habit-title">AC Eco-Scheduling</div>
+                                <div class="habit-impact">-0.70 kg CO2e avoided</div>
+                            </div>
+                        </div>
+                        <div class="habit-btn" onclick="quickLogHabit('Composted Food Scraps (3 kg)', 'waste', 0.0, 2.40)">
+                            <span class="habit-icon">♻️</span>
+                            <div>
+                                <div class="habit-title">Composted Food Scraps</div>
+                                <div class="habit-impact">-2.40 kg CO2e avoided</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="filter-pills">
-                        <button class="filter-pill active" onclick="setCategoryFilter('all')">All</button>
-                        <button class="filter-pill" onclick="setCategoryFilter('transportation')">Transit</button>
-                        <button class="filter-pill" onclick="setCategoryFilter('diet')">Diet</button>
-                        <button class="filter-pill" onclick="setCategoryFilter('energy')">Energy</button>
-                        <button class="filter-pill" onclick="setCategoryFilter('waste')">Waste</button>
+
+                    <!-- FastMCP Domain Calculator -->
+                    <div class="glass-card calc-form-card" style="max-width: 680px;">
+                        <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 14px;">FastMCP Scientific Calculator</h3>
+                        <div class="calc-tabs">
+                            <button class="calc-tab active" onclick="switchTab('transit')">🚗 Transit</button>
+                            <button class="calc-tab" onclick="switchTab('diet')">🥗 Diet & Food</button>
+                            <button class="calc-tab" onclick="switchTab('appliance')">⚡ Appliances</button>
+                            <button class="calc-tab" onclick="switchTab('waste')">♻️ Waste</button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="calc-item-label">Vehicle Mode</label>
+                            <select class="form-select" id="calc-item-select" onchange="runLiveCalculation()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" id="calc-qty-label">Distance (km)</label>
+                            <input type="number" class="form-input" id="calc-qty-input" value="40" min="1" step="any" oninput="runLiveCalculation()">
+                        </div>
+                        <div class="preview-box" id="calc-preview">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-weight: 700; color: #fff;" id="prev-title">Result</span>
+                                <span style="font-size: 18px; font-weight: 800; color: #38bdf8;" id="prev-co2">0.0 kg</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="prev-swap"></p>
+                            <button class="btn-calc" onclick="saveCalculatorLog()">+ Log to My History</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: Activity History Table -->
+                <div class="tab-view" id="view-history">
+                    <div class="glass-card history-card">
+                        <div class="table-controls">
+                            <div>
+                                <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Verified Activity History</h3>
+                                <p style="font-size: 12px; color: var(--text-muted);">Inspect, search, and delete individual records in your private session.</p>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <div class="search-box">
+                                    <span class="search-icon">🔍</span>
+                                    <input type="text" class="search-input" id="search-input" placeholder="Search activities..." oninput="renderTable()">
+                                </div>
+                                <div class="filter-pills">
+                                    <button class="filter-pill active" onclick="setCategoryFilter('all')">All</button>
+                                    <button class="filter-pill" onclick="setCategoryFilter('transportation')">Transit</button>
+                                    <button class="filter-pill" onclick="setCategoryFilter('diet')">Diet</button>
+                                    <button class="filter-pill" onclick="setCategoryFilter('energy')">Energy</button>
+                                    <button class="filter-pill" onclick="setCategoryFilter('waste')">Waste</button>
+                                </div>
+                            </div>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Activity Details</th>
+                                    <th>Emissions</th>
+                                    <th>Carbon Saved</th>
+                                    <th>Timestamp</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-tbody">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading history...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: Carbon Offsets Marketplace -->
+                <div class="tab-view" id="view-offsets">
+                    <div class="glass-card" style="padding: 24px 28px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <h3 style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">Verified Carbon Offset Directory</h3>
+                                <p style="font-size: 12px; color: var(--text-muted);">Balance residual emissions through certified Gold Standard & Verra VCS projects.</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px; background: rgba(7, 12, 24, 0.7); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--card-border);">
+                                <span style="font-size: 12px; color: var(--text-muted);">Offset Simulator:</span>
+                                <input type="range" min="10" max="500" step="10" value="100" style="accent-color: #38bdf8;" oninput="updateOffsetSim(this.value)">
+                                <span style="font-size: 13px; font-weight: 700; color: #38bdf8;" id="offset-amount-disp">100 kg (~5 trees, $3.00)</span>
+                            </div>
+                        </div>
+                        <div class="offset-grid">
+                            <div class="project-card">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 700;">Gold Standard #GS1284</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: #fff;">$15 / ton</span>
+                                    </div>
+                                    <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">🌳 Rimba Raya Biodiversity Peatland</h4>
+                                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+                                        Protects 65,000 hectares of tropical peat swamp in Borneo, preserving endangered orangutan habitats and sequestering millions of tons of CO2.
+                                    </p>
+                                </div>
+                                <a href="https://www.goldstandard.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
+                            </div>
+                            <div class="project-card">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-weight: 700;">Verra VCS #VCS921</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: #fff;">$12 / ton</span>
+                                    </div>
+                                    <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">💨 Oaxaca Wind Energy Project</h4>
+                                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+                                        102 MW clean wind farm in southern Mexico displacing fossil fuels and powering 180,000 homes annually with zero emissions.
+                                    </p>
+                                </div>
+                                <a href="https://registry.verra.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
+                            </div>
+                            <div class="project-card">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <span style="font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 700;">Blue Carbon Certified</span>
+                                        <span style="font-size: 13px; font-weight: 700; color: #fff;">$18 / ton</span>
+                                    </div>
+                                    <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #fff;">🌊 Coastal Mangrove Restoration</h4>
+                                    <p style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+                                        Restoring degraded tidal mangrove forests along the Kenyan coast, sequestering carbon up to 4x faster than terrestrial rainforests.
+                                    </p>
+                                </div>
+                                <a href="https://www.goldstandard.org/" target="_blank" class="btn-action" style="text-align: center; justify-content: center; font-size: 12px;">View Certificate ↗</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Activity Details</th>
-                        <th>Emissions</th>
-                        <th>Carbon Saved</th>
-                        <th>Timestamp</th>
-                        <th style="text-align: right;">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="history-tbody">
-                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Loading history...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
 
     <!-- Reset History Confirmation Modal -->
@@ -1343,7 +1426,36 @@ def index():
             return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Setup Calculator Tab Options
+        // Navigation Switcher
+        const NAV_METADATA = {
+            chat: { title: 'AI Carbon Chatbot', subtitle: 'Interactive conversational advisor with real-time carbon intelligence' },
+            analytics: { title: 'Carbon Analytics & Goals', subtitle: 'Executive emission breakdowns, category distribution, and daily targets' },
+            habits: { title: 'Eco Habits Studio & Calculator', subtitle: '1-click daily habit logging and FastMCP verified estimation tools' },
+            history: { title: 'Verified Activity History', subtitle: 'Granular audit log, record deletion, and compliance reporting' },
+            offsets: { title: 'Verified Carbon Offsets', subtitle: 'Certified Gold Standard and Verra VCS offset project directory' }
+        };
+
+        function switchNav(viewId) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+
+            const targetView = document.getElementById(`view-${viewId}`);
+            const targetBtn = document.getElementById(`nav-${viewId}`);
+            if (targetView) targetView.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const meta = NAV_METADATA[viewId];
+            if (meta) {
+                document.getElementById('current-view-title').innerText = meta.title;
+                document.getElementById('current-view-subtitle').innerText = meta.subtitle;
+            }
+
+            if (viewId === 'analytics' && lastSummaryData) {
+                setTimeout(() => renderChart(lastSummaryData.by_category || []), 50);
+            }
+        }
+
+        // Calculator Tab Configuration
         const TAB_OPTIONS = {
             transit: {
                 label: 'Vehicle Mode',
@@ -1454,7 +1566,6 @@ def index():
                         notes: lastCalcResult.recommendation
                     })
                 });
-                const data = await res.json();
                 triggerConfetti();
                 showToast(`✅ Logged ${lastCalcResult.co2e_kg} kg CO2e!`);
                 loadDashboard();
@@ -1478,7 +1589,7 @@ def index():
                     })
                 });
                 triggerConfetti();
-                showToast(`⚡ Habit logged: ${name} (${co2 > 0 ? '+' + co2 : '-' + saved} kg CO2e)`);
+                showToast(`⚡ Habit logged: ${name}`);
                 loadDashboard();
             } catch (err) {
                 showToast(`Error: ${err}`);
@@ -1528,6 +1639,7 @@ def index():
                 document.getElementById('kpi-emissions').innerHTML = `${data.total_emissions_kg} <span>kg CO2e</span>`;
                 document.getElementById('kpi-saved').innerHTML = `${data.total_saved_kg} <span>kg CO2e</span>`;
                 document.getElementById('kpi-count').innerText = `${data.total_entries} verified activities`;
+                document.getElementById('nav-history-count').innerText = data.total_entries;
                 
                 const pct = Math.min(100, data.budget_used_pct || 0);
                 document.getElementById('kpi-budget').innerHTML = `${pct}% <span>utilized</span>`;
@@ -1561,7 +1673,9 @@ def index():
         }
 
         function renderChart(categories) {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
+            const chartCanvas = document.getElementById('categoryChart');
+            if (!chartCanvas) return;
+            const ctx = chartCanvas.getContext('2d');
             const labels = categories.length > 0 ? categories.map(c => c.category) : ['No activities yet'];
             const dataVals = categories.length > 0 ? categories.map(c => c.total_co2e) : [1];
             const colors = ['#10b981', '#38bdf8', '#f59e0b', '#a855f7', '#f43f5e', '#64748b'];
@@ -1589,12 +1703,12 @@ def index():
                             position: 'right',
                             labels: {
                                 color: '#94a3b8',
-                                font: { size: 11, family: 'Inter' },
-                                boxWidth: 12
+                                font: { size: 12, family: 'Inter' },
+                                boxWidth: 14
                             }
                         }
                     },
-                    cutout: '68%'
+                    cutout: '70%'
                 }
             });
         }
@@ -1711,23 +1825,6 @@ def index():
             }
         }
 
-        function clearChat() {
-            chatHistory = [];
-            const stream = document.getElementById('chat-stream');
-            stream.innerHTML = `
-                <div class="chat-msg-row">
-                    <div class="chat-avatar avatar-bot">🌱</div>
-                    <div class="msg-wrapper">
-                        <div class="msg-bubble msg-agent">
-                            👋 <strong>Conversation reset.</strong> I'm ready for your next activity or sustainability question! How can I help you?
-                        </div>
-                        <span class="msg-time">${formatTimeNow()}</span>
-                    </div>
-                </div>
-            `;
-            showToast('🧹 Chat conversation reset');
-        }
-
         async function submitChat() {
             const input = document.getElementById('chat-input');
             const text = input.value.trim();
@@ -1789,7 +1886,6 @@ def index():
                 });
                 const data = await res.json();
                 
-                // Remove typing indicator
                 const typingEl = document.getElementById('typing-indicator-row');
                 if (typingEl) typingEl.remove();
 
@@ -1803,14 +1899,13 @@ def index():
                         <div class="msg-wrapper">
                             <div class="security-alert-box">
                                 <div class="security-alert-header">
-                                    <span class="security-badge-icon">🚨</span>
-                                    <span>Security Guardrail Triggered</span>
+                                    <span>🚨 Security Guardrail Triggered</span>
                                 </div>
                                 <div class="security-alert-body">
                                     <strong>Blocked:</strong> ${data.rejection_reason || 'Potential prompt injection, unauthorized override, or sensitive data leak detected.'}
                                 </div>
                                 <div class="security-alert-meta">
-                                    Audit Action: Blocked & Logged • Enterprise Policy: Zero-Trust Strict Sandbox
+                                    Audit Action: Blocked & Logged • Enterprise Zero-Trust Sandbox
                                 </div>
                             </div>
                             <span class="msg-time">${formatTimeNow()}</span>
