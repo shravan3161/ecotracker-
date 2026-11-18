@@ -186,4 +186,4 @@ Deploy EcoTracker to the cloud for free with **Render**:
 
 ## 📄 License
 
-Licensed under the Apache License, Version 2.0. Built for the Google ADK 2.0 Hackathon (Track 1: Agents for Good).
+Licensed under the Apache License, Version 2.0.
