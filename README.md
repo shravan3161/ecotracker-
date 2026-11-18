@@ -10,8 +10,7 @@
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](Dockerfile)
 
 > 🚀 **Live Production Deployment:** **[https://ecotracker-hjj5.onrender.com](https://ecotracker-hjj5.onrender.com)**  
-> **Google ADK 2.0 Hackathon — Track 1: Agents for Good**  
-> An autonomous, enterprise-grade AI carbon intelligence agent that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
+> An autonomous, enterprise-grade AI carbon intelligence platform that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
 
 ---
 

@@ -1,8 +1,7 @@
-# EcoTracker — Submission Writeup
+# EcoTracker — Platform Architecture & Technical Overview
 
-**Track:** Agents for Good (Track 1)
-**Project:** EcoTracker — AI Carbon Footprint Agent
-**Built with:** Google ADK 2.0, Gemini, FastMCP
+**Project:** EcoTracker — AI Carbon Intelligence Platform  
+**Built with:** Google ADK 2.0, Gemini, FastMCP, FastAPI, SQLite  
 
 ---
 
@@ -151,7 +150,7 @@ This demonstrates a real-world agentic pattern where sensitive actions (writing 
 
 ## 9. Recent Enhancements & Production Upgrades
 
-Building upon the initial hackathon prototype, EcoTracker has been upgraded into a production-grade personal sustainability system:
+Building upon the initial core architecture, EcoTracker has been upgraded into a production-grade personal sustainability system:
 
 1. **Embedded SQLite Persistence Engine (`app/db.py`)**:
    - Replaced mock logging with a true relational schema storing verified footprint records, category breakdowns, and cumulative savings.
