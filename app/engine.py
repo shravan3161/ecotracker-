@@ -385,16 +385,26 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
             pct = round((saved / car_co2) * 100) if car_co2 > 0 else 0
             return {
                 "reply": (
-                    f"🚆 **Great question! Comparing to an Electric Train:**\n\n"
+                    f"🚆 **Comparing to an Electric Train:**\n\n"
                     f"For that **{km_target} km** journey, an electric train emits only **`{co2} kg CO2e`** "
                     f"(compared to `{car_co2} kg` in a standard car).\n\n"
                     f"🌟 **Net Impact:** You avoid **`{saved} kg CO2e` ({pct}% reduction)**!\n\n"
-                    f"Would you like me to log this eco-friendly transit choice to your dashboard? Say **\"log it\"** to record it."
+                    f"Would you like me to log this eco-friendly transit choice to your dashboard?"
                 ),
+                "items": [{
+                    "category": "transportation",
+                    "title": f"🚆 Electric Train Transit ({km_target} km)",
+                    "emissions": co2,
+                    "savings": saved,
+                    "formula": f"{km_target} km × 0.035 kg CO2e/km",
+                    "swap": f"Electric rail avoids ~{saved} kg CO2e ({pct}% reduction) compared to driving a gasoline vehicle.",
+                    "has_number": True
+                }],
                 "is_chat_only": False,
                 "total_emissions_kg": co2,
                 "total_saved_kg": saved,
-                "category": "transportation"
+                "category": "transportation",
+                "has_benchmark": False
             }
         elif "electric" in lower or "ev" in lower:
             co2 = round(km_target * EMISSION_FACTORS["electric car"], 2)
@@ -407,12 +417,22 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
                     f"Covering that **{km_target} km** route in an EV emits only **`{co2} kg CO2e`** "
                     f"(based on average grid charging intensity of 45 g/km).\n\n"
                     f"🌟 **Net Impact:** You avoid **`{saved} kg CO2e` ({pct}% reduction)** vs gasoline driving!\n\n"
-                    f"Would you like me to save this EV trip to your profile? Say **\"log it\"**."
+                    f"Would you like me to save this EV trip to your profile?"
                 ),
+                "items": [{
+                    "category": "transportation",
+                    "title": f"⚡ Electric Vehicle (EV) ({km_target} km)",
+                    "emissions": co2,
+                    "savings": saved,
+                    "formula": f"{km_target} km × 0.045 kg CO2e/km",
+                    "swap": f"EV charging avoids ~{saved} kg CO2e ({pct}% reduction) compared to gasoline internal combustion.",
+                    "has_number": True
+                }],
                 "is_chat_only": False,
                 "total_emissions_kg": co2,
                 "total_saved_kg": saved,
-                "category": "transportation"
+                "category": "transportation",
+                "has_benchmark": False
             }
 
     # 5. Full Activity Parsing & Conversational Breakdown
@@ -464,9 +484,11 @@ def handle_chatbot_turn(query: str, history: List[Dict[str, str]] = None, user_s
 
     return {
         "reply": "\n".join(lines),
+        "items": items,
         "is_chat_only": False,
         "total_emissions_kg": tot_co2,
         "total_saved_kg": tot_saved,
-        "category": cat
+        "category": cat,
+        "has_benchmark": has_unspecified
     }
 

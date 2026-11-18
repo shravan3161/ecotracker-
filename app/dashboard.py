@@ -241,8 +241,11 @@ async def chat_handler(req: ChatRequest):
         total_saved = bot_turn["total_saved_kg"]
         primary_category = bot_turn["category"]
         is_chat_only = bot_turn.get("is_chat_only", False)
+        items = bot_turn.get("items", [])
+        has_benchmark = bot_turn.get("has_benchmark", False)
 
     # 4. Check if User Requested to Log / Save to Profile
+    rec = None
     if is_log_action and total_co2 > 0:
         rec = db.log_calculation(
             category=primary_category,
@@ -261,10 +264,13 @@ async def chat_handler(req: ChatRequest):
     return JSONResponse(content={
         "success": True,
         "reply": reply_content,
+        "items": items,
         "co2e_kg": total_co2,
         "saved_co2e_kg": total_saved,
         "category": primary_category,
         "is_chat_only": is_chat_only,
+        "has_benchmark": has_benchmark,
+        "logged_record": rec if rec else None,
         "pii_redacted": sec_res.pii_redacted,
         "audit_log": sec_res.audit_event
     })
@@ -282,6 +288,7 @@ def index():
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
     <style>
         :root {
             --primary: #10b981;
@@ -563,27 +570,171 @@ def index():
         }
         .chat-msg-row.user .msg-wrapper { align-items: flex-end; }
         .msg-bubble {
-            padding: 13px 18px;
+            padding: 14px 18px;
             border-radius: 14px;
-            font-size: 14px;
+            font-size: 13.5px;
             line-height: 1.6;
         }
         .msg-user {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #fff;
             border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
         }
         .msg-agent {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(15, 23, 42, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #f1f5f9;
+            color: #e2e8f0;
             border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            word-break: break-word;
+        }
+        .msg-agent p { margin: 0 0 10px 0; line-height: 1.6; }
+        .msg-agent p:last-child { margin-bottom: 0; }
+        .msg-agent ul, .msg-agent ol { margin: 8px 0 12px 20px; padding: 0; }
+        .msg-agent li { margin-bottom: 6px; line-height: 1.55; color: #cbd5e1; }
+        .msg-agent strong { color: #fff; font-weight: 700; }
+        .msg-agent em { color: #94a3b8; }
+        .msg-agent hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 14px 0; }
+        .msg-agent h3, .msg-agent h4 { color: #fff; font-weight: 700; margin: 12px 0 6px; }
+        .msg-agent code {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 12px;
+            font-family: ui-monospace, monospace;
         }
         .msg-time {
             font-size: 10.5px;
             color: var(--text-muted);
             margin-top: 4px;
             padding: 0 4px;
+        }
+
+        /* Modern Structured Carbon Result Card */
+        .carbon-calc-card {
+            background: rgba(11, 18, 33, 0.95);
+            border: 1px solid rgba(16, 185, 129, 0.28);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin: 10px 0 6px;
+            box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .calc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .calc-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14.5px;
+            color: #fff;
+        }
+        .emissions-pill {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+        }
+        .formula-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .formula-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11.5px;
+            color: #94a3b8;
+            font-family: ui-monospace, monospace;
+        }
+        .baseline-badge {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .eco-swap-card {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-left: 3px solid #10b981;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        .eco-swap-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .eco-swap-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #34d399;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .eco-saved-pill {
+            background: rgba(16, 185, 129, 0.22);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #6ee7b7;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .eco-swap-desc {
+            font-size: 12.5px;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .benchmark-info-box {
+            background: rgba(56, 189, 248, 0.05);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            line-height: 1.45;
+        }
+        .logged-success-card {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #6ee7b7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 13px;
         }
         
         /* Security Alert Box */
@@ -627,20 +778,35 @@ def index():
             margin-top: 12px;
         }
         .chat-action-btn {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            color: #34d399;
-            padding: 6px 12px;
-            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .chat-action-btn:hover {
-            background: rgba(16, 185, 129, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
             color: #fff;
             transform: translateY(-1px);
+        }
+        .chat-action-btn.primary {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.35));
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #6ee7b7;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
+        }
+        .chat-action-btn.primary:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.5));
+            color: #fff;
+            border-color: #34d399;
         }
         .typing-dots {
             display: inline-flex;
@@ -1917,40 +2083,113 @@ def index():
                     return;
                 }
 
-                // Format reply into clean HTML paragraphs
-                const formatted = data.reply
-                    .replace(/### (.*?)\n/g, '<h4 style="margin: 8px 0 4px; color: #fff;">$1</h4>')
-                    .replace(/#### (.*?)\n/g, '<h5 style="margin: 6px 0 2px; color: #38bdf8;">$1</h5>')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/`([^`]+)`/g, '<code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; color: #a7f3d0;">$1</code>')
-                    .replace(/\n\n/g, '<br><br>')
-                    .replace(/\n/g, '<br>');
+                // Helper to render markdown cleanly
+                function renderMarkdown(text) {
+                    if (!text) return '';
+                    if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+                        return marked.parse(text);
+                    }
+                    let html = text
+                        .replace(/### (.*?)\n/g, '<h4 style="margin: 8px 0 4px; color: #fff;">$1</h4>')
+                        .replace(/#### (.*?)\n/g, '<h5 style="margin: 6px 0 2px; color: #38bdf8;">$1</h5>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/`([^`]+)`/g, '<code class="chat-code">$1</code>')
+                        .replace(/^---$/gm, '<hr>')
+                        .replace(/^- (.*)$/gm, '<li>$1</li>');
+                    html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+                    return html.split('\n\n').map(p => p.trim() ? `<p>${p.replace(/\n/g, '<br>')}</p>` : '').join('');
+                }
 
-                // Action buttons if this was a calculation
-                let actionHtml = '';
-                if (data.co2e_kg && data.co2e_kg > 0 && !promptText.toLowerCase().includes('log')) {
-                    actionHtml = `
-                        <div class="chat-action-pills">
-                            <button class="chat-action-btn" onclick="saveDirectFromChat('${data.category}', '${promptText.replace(/'/g, "\\'")}', ${data.co2e_kg}, ${data.saved_co2e_kg || 0})">
-                                📌 Log to My Profile (+${data.co2e_kg} kg)
-                            </button>
-                            <button class="chat-action-btn" onclick="sendPrompt('What if I took an electric train instead?')">
-                                🚆 Compare to Train
-                            </button>
-                            <button class="chat-action-btn" onclick="sendPrompt('What if I used an electric car?')">
-                                ⚡ Compare to EV
-                            </button>
+                let bubbleHtml = '';
+                if (data.items && data.items.length > 0) {
+                    let cardsHtml = '';
+                    for (const it of data.items) {
+                        const isBenchmarked = !it.has_number;
+                        const formulaClean = (it.formula || '').replace(/\(using standard.*?\)/i, '').replace(/\(default.*?\)/i, '').trim();
+                        cardsHtml += `
+                            <div class="carbon-calc-card">
+                                <div class="calc-header">
+                                    <div class="calc-title">
+                                        <span>${it.title}</span>
+                                    </div>
+                                    <div class="emissions-pill">
+                                        <span>💨</span>
+                                        <span>${Number(it.emissions).toFixed(2)} kg CO2e</span>
+                                    </div>
+                                </div>
+                                <div class="formula-meta">
+                                    <span class="formula-tag">📐 ${formulaClean}</span>
+                                    ${isBenchmarked ? '<span class="baseline-badge">📌 Standard Baseline Average</span>' : ''}
+                                </div>
+                                ${it.swap ? `
+                                    <div class="eco-swap-card">
+                                        <div class="eco-swap-top">
+                                            <span class="eco-swap-label">💡 Recommended Eco-Swap</span>
+                                            ${it.savings > 0 ? `<span class="eco-saved-pill">🌱 Avoids ~${Number(it.savings).toFixed(2)} kg CO2e</span>` : ''}
+                                        </div>
+                                        <div class="eco-swap-desc">${it.swap}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+
+                    let benchmarkNotice = '';
+                    if (data.has_benchmark) {
+                        benchmarkNotice = `
+                            <div class="benchmark-info-box">
+                                💡 <strong>Benchmark Note:</strong> Since no specific numbers (distance, weight, or hours) were provided, this was estimated using standard daily averages. Reply with your exact numbers (e.g. <em>"it was 14 km"</em>) to recalculate!
+                            </div>
+                        `;
+                    }
+
+                    let loggedNotice = '';
+                    if (data.logged_record) {
+                        const rec = data.logged_record;
+                        loggedNotice = `
+                            <div class="logged-success-card">
+                                <span>✅</span>
+                                <div><strong>Confirmed & Recorded!</strong> Saved to your private activity history (Log #${rec.id}).</div>
+                            </div>
+                        `;
+                    }
+
+                    let actionHtml = '';
+                    if (!data.is_chat_only && !data.logged_record && data.co2e_kg > 0 && !promptText.toLowerCase().includes('log') && !promptText.toLowerCase().includes('save')) {
+                        actionHtml = `
+                            <div class="chat-action-pills">
+                                <button class="chat-action-btn primary" onclick="saveDirectFromChat('${data.category}', '${promptText.replace(/'/g, "\\'")}', ${data.co2e_kg}, ${data.saved_co2e_kg || 0})">
+                                    📌 Log to My Profile (+${data.co2e_kg} kg)
+                                </button>
+                                <button class="chat-action-btn" onclick="sendPrompt('What if I took an electric train instead?')">
+                                    🚆 Compare to Train
+                                </button>
+                                <button class="chat-action-btn" onclick="sendPrompt('What if I used an electric car?')">
+                                    ⚡ Compare to EV
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    bubbleHtml = `
+                        <div style="font-size: 13.5px; color: #cbd5e1; margin-bottom: 8px;">
+                            🌿 <strong>Carbon Impact Breakdown:</strong>
                         </div>
+                        ${cardsHtml}
+                        ${benchmarkNotice}
+                        ${loggedNotice}
+                        ${actionHtml}
                     `;
+                } else {
+                    bubbleHtml = renderMarkdown(data.reply);
                 }
 
                 botRow.innerHTML = `
                     <div class="chat-avatar avatar-bot">🌱</div>
                     <div class="msg-wrapper">
                         <div class="msg-bubble msg-agent">
-                            ${formatted}
-                            ${actionHtml}
+                            ${bubbleHtml}
                         </div>
                         <span class="msg-time">${formatTimeNow()}</span>
                     </div>
@@ -1960,7 +2199,7 @@ def index():
 
                 chatHistory.push({ role: 'assistant', content: data.reply });
 
-                if (promptText.toLowerCase().includes('log') || promptText.toLowerCase().includes('save')) {
+                if (promptText.toLowerCase().includes('log') || promptText.toLowerCase().includes('save') || data.logged_record) {
                     triggerConfetti();
                     loadDashboard();
                     showToast('✅ Activity saved to dashboard history!');
