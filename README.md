@@ -9,9 +9,6 @@
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](Dockerfile)
 [![Render Deploy](https://img.shields.io/badge/Render-Deploy%20Ready-46E3B7?style=flat-square&logo=render)](render.yaml)
 
-> **Google ADK 2.0 Hackathon — Track 1: Agents for Good**  
-> An autonomous, enterprise-grade AI carbon intelligence agent that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
-
 ---
 
 ## 🌟 Highlights & Core Capabilities
