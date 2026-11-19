@@ -840,6 +840,7 @@ def get_dashboard_html() -> str:
                     <li><button class="nav-button" id="desk-nav-esg" onclick="switchTab('esg')"><span class="nav-left">💼 Enterprise ESG</span><span class="nav-pill" style="background: rgba(168,85,247,0.2); color: #c084fc;">B2B</span></button></li>
                     <li><button class="nav-button" id="desk-nav-history" onclick="switchTab('history')"><span class="nav-left">📋 Activity History</span><span id="desk-history-count" class="nav-pill" style="background: rgba(255,255,255,0.08); color: var(--text-secondary);">0</span></button></li>
                     <li><button class="nav-button" id="desk-nav-offsets" onclick="switchTab('offsets')"><span class="nav-left">🌍 Carbon Offsets</span></button></li>
+                    <li><button class="nav-button" id="desk-nav-future" onclick="switchTab('future')"><span class="nav-left">🚀 Future Scope</span><span class="nav-pill" style="background: rgba(59,130,246,0.2); color: #60a5fa;">Roadmap</span></button></li>
                 </ul>
             </div>
 
@@ -1320,6 +1321,65 @@ def get_dashboard_html() -> str:
                         </div>
                     </div>
                 </section>
+
+                <!-- VIEW 10: Future Scope & Strategic Roadmap -->
+                <section class="view-panel" id="view-future">
+                    <div class="glass-card">
+                        <div class="glass-card-header">
+                            <div>
+                                <h3 class="glass-card-title">🚀 Strategic Roadmap & Future Scope</h3>
+                                <p class="glass-card-subtitle">Architectural evolution towards autonomous sustainability intelligence</p>
+                            </div>
+                            <span class="status-badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">2027-2028 Horizon</span>
+                        </div>
+
+                        <div class="glass-card-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                            <div class="glass-card" style="margin-bottom: 0; background: var(--bg-surface-elevated);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; font-weight: 700; color: var(--text-tertiary);">Q1-Q2 2027</span>
+                                    <span class="status-badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">Architecture</span>
+                                </div>
+                                <h4 style="font-size: var(--font-lg); font-weight: 800; margin-bottom: 6px;">🔌 IoT & Smart Home Ingestion</h4>
+                                <p style="font-size: 14px; color: #60a5fa; font-weight: 600; margin-bottom: 8px;">Matter, MQTT & Zigbee Smart Plugs</p>
+                                <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">Automated telemetry streaming from smart plugs and Google Nest thermostats into FastMCP, removing manual entry completely.</p>
+                                <div style="font-size: 13px; color: var(--text-tertiary);">✓ Zero manual input &nbsp;•&nbsp; ✓ Real-time wattage &nbsp;•&nbsp; ✓ Sub-second alerts</div>
+                            </div>
+
+                            <div class="glass-card" style="margin-bottom: 0; background: var(--bg-surface-elevated);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; font-weight: 700; color: var(--text-tertiary);">Q2-Q3 2027</span>
+                                    <span class="status-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">Prototyping</span>
+                                </div>
+                                <h4 style="font-size: var(--font-lg); font-weight: 800; margin-bottom: 6px;">💳 Open Banking Green Fintech</h4>
+                                <p style="font-size: 14px; color: #34d399; font-weight: 600; margin-bottom: 8px;">Plaid & Open Banking Aggregation</p>
+                                <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">Merchant Category Code (MCC) footprinting for automated transaction emissions across grocery, fuel, and travel cards.</p>
+                                <div style="font-size: 13px; color: var(--text-tertiary);">✓ Bank-grade OAuth &nbsp;•&nbsp; ✓ USEEIO factors &nbsp;•&nbsp; ✓ Automated tracking</div>
+                            </div>
+
+                            <div class="glass-card" style="margin-bottom: 0; background: var(--bg-surface-elevated);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; font-weight: 700; color: var(--text-tertiary);">Q3 2027</span>
+                                    <span class="status-badge" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">Research</span>
+                                </div>
+                                <h4 style="font-size: var(--font-lg); font-weight: 800; margin-bottom: 6px;">🤖 Autonomous A2A Microgrid Auctions</h4>
+                                <p style="font-size: 14px; color: #fbbf24; font-weight: 600; margin-bottom: 8px;">Decentralized Smart EV Load Scheduling</p>
+                                <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">Multi-agent ADK negotiation scheduling home EV batteries during peak renewable generation to maximize clean energy use.</p>
+                                <div style="font-size: 13px; color: var(--text-tertiary);">✓ Tariff arbitrage &nbsp;•&nbsp; ✓ Zero curtailment &nbsp;•&nbsp; ✓ Grid stabilization</div>
+                            </div>
+
+                            <div class="glass-card" style="margin-bottom: 0; background: var(--bg-surface-elevated);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-size: 13px; font-weight: 700; color: var(--text-tertiary);">Q4 2027</span>
+                                    <span class="status-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">Concept</span>
+                                </div>
+                                <h4 style="font-size: var(--font-lg); font-weight: 800; margin-bottom: 6px;">⛓️ Decentralized On-Chain ESG Audit</h4>
+                                <p style="font-size: 14px; color: #c084fc; font-weight: 600; margin-bottom: 8px;">Double-Counting-Proof Credit Ledger</p>
+                                <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">Immutable, zero-greenwashing verification certificates for corporate CSRD and SEC compliance filings.</p>
+                                <div style="font-size: 13px; color: var(--text-tertiary);">✓ Verifiable proof &nbsp;•&nbsp; ✓ Anti-greenwashing &nbsp;•&nbsp; ✓ Audit transparency</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -1361,6 +1421,7 @@ def get_dashboard_html() -> str:
                 <button class="nav-button" onclick="switchTab('esg'); toggleMobileDrawer();">💼 Enterprise ESG Disclosure</button>
                 <button class="nav-button" onclick="switchTab('history'); toggleMobileDrawer();">📋 Activity Audit History</button>
                 <button class="nav-button" onclick="switchTab('offsets'); toggleMobileDrawer();">🌍 Carbon Offsets Directory</button>
+                <button class="nav-button" onclick="switchTab('future'); toggleMobileDrawer();">🚀 Future Scope & Roadmap</button>
                 <button class="nav-button" onclick="generateScorecardModal(); toggleMobileDrawer();">🏅 My Eco Scorecard</button>
                 <button class="nav-button" onclick="openApiKeyModal(); toggleMobileDrawer();">⚙️ Configure Cloud LLM API Key</button>
             </div>
@@ -1433,7 +1494,8 @@ def get_dashboard_html() -> str:
             habits: { title: 'Eco Habits Studio', subtitle: '1-tap habit presets and scientific calculations' },
             esg: { title: 'Enterprise ESG Disclosure', subtitle: 'GHG Protocol Scope 1-2-3 compliance balance sheet' },
             history: { title: 'Activity Audit History', subtitle: 'Verified transactional record management' },
-            offsets: { title: 'Verified Carbon Offsets', subtitle: 'Certified Gold Standard & Verra portfolio' }
+            offsets: { title: 'Verified Carbon Offsets', subtitle: 'Certified Gold Standard & Verra portfolio' },
+            future: { title: 'Future Scope & Strategic Roadmap', subtitle: 'IoT telemetry, open banking, autonomous A2A auctions, and on-chain audits' }
         };
 
         function showToast(message) {

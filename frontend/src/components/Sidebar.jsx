@@ -18,7 +18,8 @@ export default function Sidebar({
     { id: 'habits', label: '⚡ Habits Studio' },
     { id: 'esg', label: '💼 Enterprise ESG', pill: 'B2B', pillStyle: { background: 'rgba(168,85,247,0.2)', color: '#c084fc' } },
     { id: 'history', label: '📋 Activity History', pill: historyCount ?? '0', pillStyle: { background: 'rgba(255,255,255,0.08)', color: 'var(--text-secondary)' } },
-    { id: 'offsets', label: '🌍 Carbon Offsets' }
+    { id: 'offsets', label: '🌍 Carbon Offsets' },
+    { id: 'future', label: '🚀 Future Scope', pill: 'Roadmap', pillStyle: { background: 'rgba(59,130,246,0.2)', color: '#60a5fa' } }
   ];
 
   return (

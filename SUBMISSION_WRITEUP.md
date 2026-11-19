@@ -221,3 +221,20 @@ ecotracker/
 ├── pyproject.toml        # Dependencies and tool configurations
 └── README.md
 ```
+
+---
+
+## 11. Future Scope & Strategic Roadmap
+
+1. **IoT Smart Meter & Home Telemetry (Matter / MQTT / Zigbee)**:
+   - Automated ingestion from Shelly/TP-Link smart plugs and Google Nest thermostats streaming true kWh into FastMCP calculation engines without manual human logging.
+2. **Open Banking & Green Fintech Footprinting (Plaid / Yapily)**:
+   - Direct transactional accounting leveraging Merchant Category Codes (MCCs) and USEEIO econometric emission models across debit and credit cards.
+3. **Autonomous Agent-to-Agent (A2A) Microgrid Energy Auctions**:
+   - Multi-agent ADK negotiation scheduling home battery charging and EV load shifts during dynamic negative-tariff renewable generation windows.
+4. **Decentralized Carbon Credit Verification & On-Chain Audit**:
+   - Double-counting-proof smart certificates on eco-friendly distributed ledgers ensuring zero-greenwashing compliance for CSRD, SEC Climate, and California SB 253 corporate disclosures.
+5. **Cross-Platform Native Mobile Apps with Passive GPS Detection**:
+   - React Native / Expo sensor fusion engine with battery-efficient geofencing to passively detect bicycle, train, and car transit trips.
+6. **Enterprise Scope 3 Supply Chain Ingestion Portal**:
+   - Upstream supplier portal automating vendor carbon questionnaires and extracting line-item carbon from PEPPOL / EDI electronic invoices.

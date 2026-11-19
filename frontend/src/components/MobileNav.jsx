@@ -27,7 +27,8 @@ export default function MobileNav({
     { id: 'habits', label: '⚡ Habits Studio' },
     { id: 'esg', label: '💼 Enterprise ESG' },
     { id: 'history', label: '📋 Activity History' },
-    { id: 'offsets', label: '🌍 Carbon Offsets' }
+    { id: 'offsets', label: '🌍 Carbon Offsets' },
+    { id: 'future', label: '🚀 Future Scope' }
   ];
 
   return (

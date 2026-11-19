@@ -204,6 +204,36 @@ Continuous deployment is active via [render.yaml](render.yaml) and [Dockerfile](
 
 ---
 
+## 🚀 Future Scope & Strategic Roadmap
+
+EcoTracker is architected as an extensible, enterprise-grade sustainability intelligence platform. The roadmap below outlines the architectural evolution designed to transition EcoTracker from a conversational advisor into a ubiquitous, autonomous climate intelligence operating system:
+
+### 1. 🔌 IoT & Smart Home Telemetry Ingestion (Matter / MQTT / Zigbee)
+- **Zero-Manual Data Entry:** Direct telemetry streaming from smart plugs (Shelly, TP-Link Kasa) and smart thermostats (Google Nest, Ecobee) directly into the FastMCP appliance toolset.
+- **Sub-Second Load Anomaly Alerts:** Proactively detect high-consumption vampire loads and faulty appliance draw before energy bills spike.
+
+### 2. 💳 Open Banking & Automated Green Fintech Tracking (Plaid / Yapily)
+- **Transactional Carbon Auditing:** Read-only bank connection utilizing Merchant Category Codes (MCCs) paired with EPA economic input-output (USEEIO) models.
+- **Automated Lifestyle Footprinting:** Instant carbon attribution on grocery shopping, gas station fill-ups, and airline tickets with suggested offset bundles.
+
+### 3. 🤖 Autonomous Agent-to-Agent (A2A) Microgrid Energy Auctions
+- **Decentralized Load Scheduling:** Leveraging the Google ADK 2.0 multi-agent architecture to allow home energy agents to communicate with local solar microgrids and grid operators.
+- **Dynamic EV Tariff Arbitrage:** Automatically schedules electric vehicle charging and home battery discharge during surplus renewable generation and negative wholesale price windows.
+
+### 4. ⛓️ Decentralized On-Chain ESG Audit & Verification
+- **Anti-Greenwashing Guarantee:** Immutable, cryptographically signed carbon retirement certificates recorded on eco-friendly distributed ledgers (e.g. Hedera Guardian, Toucan, Puro.earth).
+- **Audit-Proof Corporate Disclosures:** Double-counting-proof tracking aligned with EU CSRD, SEC Climate Disclosure, and California SB 253 rules.
+
+### 5. 📱 Cross-Platform Native Mobile Apps with Passive GPS Transit Detection
+- **Sensor Fusion:** Transitioning the PWA into native React Native / Expo binaries with battery-optimized background geofencing and accelerometer sensor fusion.
+- **Automated Journey Classification:** Passive recognition of walking, cycling, train commutes, and car journeys without requiring manual interaction.
+
+### 6. 🏢 Enterprise Scope 3 Upstream Supply Chain Portal
+- **Automated Supplier Ingestion:** Multi-tenant B2B portal allowing enterprises to invite tier-1 and tier-2 suppliers to complete automated AI carbon audits.
+- **EDI / PEPPOL Invoice Carbon Ingestion:** Automated extraction of embodied line-item carbon from electronic supplier invoices.
+
+---
+
 ## 🤝 Built With
 
 - **[Google ADK 2.0](https://adk.dev/)** — Autonomous Agent Development Kit

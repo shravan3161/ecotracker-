@@ -11,6 +11,7 @@ import SimulatorView from './components/SimulatorView';
 import EsgView from './components/EsgView';
 import HistoryView from './components/HistoryView';
 import OffsetsView from './components/OffsetsView';
+import FutureScopeView from './components/FutureScopeView';
 import ScorecardModal from './components/ScorecardModal';
 import ApiKeyModal from './components/ApiKeyModal';
 
@@ -188,6 +189,8 @@ export default function App() {
           )}
 
           {activeTab === 'offsets' && <OffsetsView onShowToast={showToast} />}
+
+          {activeTab === 'future' && <FutureScopeView />}
         </div>
       </main>
 

@@ -18,7 +18,8 @@ export default function Header({
     simulator: { title: '🔮 What-If Climate & ROI Simulator', subtitle: 'Interactive transition modeling across 1, 5, and 10 year horizons' },
     esg: { title: '💼 Enterprise ESG Scope 1, 2, 3', subtitle: 'GHG Protocol corporate disclosure & printable audit report' },
     history: { title: '📋 Activity History & Audit', subtitle: 'Searchable ledger with CSV export and row deletion' },
-    offsets: { title: '🌍 Verified Carbon Offset Projects', subtitle: 'Gold Standard & Verra verified carbon credit catalog' }
+    offsets: { title: '🌍 Verified Carbon Offset Projects', subtitle: 'Gold Standard & Verra verified carbon credit catalog' },
+    future: { title: '🚀 Future Scope & Strategic Roadmap', subtitle: 'IoT telemetry, open banking, autonomous A2A auctions, and decentralized audits' }
   };
 
   const current = tabTitles[activeTab] || tabTitles.chat;
