@@ -126,3 +126,15 @@ def test_chat_dismissive_and_random_inputs():
     data_num = res_num.json()
     assert data_num["co2e_kg"] == 9.6  # 50 km * 0.192 kg/km
 
+def test_react_and_classic_routes():
+    client = TestClient(app)
+    # Root route serves the React SPA build
+    res_root = client.get("/")
+    assert res_root.status_code == 200
+    assert "EcoTracker" in res_root.text
+
+    # Classic route serves the vanilla HTML dashboard
+    res_classic = client.get("/classic")
+    assert res_classic.status_code == 200
+    assert "EcoTracker" in res_classic.text
+

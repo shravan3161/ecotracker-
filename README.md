@@ -5,13 +5,13 @@
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-ecotracker--hjj5.onrender.com-success?style=for-the-badge&logo=render)](https://ecotracker-hjj5.onrender.com)
 [![Google ADK 2.0](https://img.shields.io/badge/Google%20ADK-2.0-4285F4?style=flat-square&logo=google)](https://adk.dev/)
 [![FastMCP](https://img.shields.io/badge/MCP-FastMCP-10B981?style=flat-square)](https://github.com/jlowin/fastmcp)
+[![React](https://img.shields.io/badge/React-19.3-61DAFB?style=flat-square&logo=react)](frontend/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Tests Passing](https://img.shields.io/badge/pytest-20%2F20%20passed-brightgreen?style=flat-square&logo=pytest)](tests/)
+[![Tests Passing](https://img.shields.io/badge/pytest-29%2F29%20passed-brightgreen?style=flat-square&logo=pytest)](tests/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](Dockerfile)
 
 > 🚀 **Live Production Deployment:** **[https://ecotracker-hjj5.onrender.com](https://ecotracker-hjj5.onrender.com)**  
 > An autonomous, enterprise-grade AI carbon intelligence platform that calculates lifestyle carbon footprints with scientific rigor, recommends high-impact eco-swaps, manages multi-tenant sustainability budgets, and enforces zero-trust security guardrails.
-
 
 ---
 
@@ -23,12 +23,31 @@
   - **Activities without Numbers** (e.g. *"Drove my car"* ➔ transparent industry baseline benchmark of 25 km commute = `4.80 kg CO2e` with prompt to refine).
   - **Chit-chat & Random Input** (e.g. *"shutup"*, *"hello"*, gibberish ➔ `0.0 kg CO2e`, no synthetic fake calculations).
 - 🎨 **Exquisite Carbon Result Cards** — Replaces messy CLI text dumps with modern visual cards featuring real-time emissions pills, formula breakdowns, emerald-accented eco-swap recommendations, and rich markdown via `marked.js`.
-- 📊 **Modern Linear/Vercel-Style SaaS Shell** — Responsive sidebar navigation with 5 dedicated views:
-  1. **💬 AI Carbon Chat** — Conversational agent with avatars, animated typing indicators, and in-chat 1-click action pills.
-  2. **📈 Analytics & Budget** — Real-time KPI metric cards, Chart.js category distribution doughnut, and interactive daily budget target slider.
-  3. **⚡ Eco Habits Studio** — 1-click presets (*Morning Coffee*, *Train Commute*, *Plant-Based Lunch*, *Bicycle Ride*, *AC Eco-Scheduling*) with `canvas-confetti` celebrations.
-  4. **📋 Activity History** — Search filtering, category badges, individual row deletion, full wipe, and downloadable CSV report exports (`/api/export-csv`).
-  5. **🌍 Carbon Offset Projects** — Verified Gold Standard & Verra VCS project directory with interactive offset portfolio slider.
+- 📸 **Multimodal Vision Intelligence** — Uses Gemini 2.5 Flash Vision OCR to extract line-item emissions from photos or scans of **grocery receipts** and **electricity utility bills**, identifying individual items and calculating instant green swaps.
+- ⚡ **Live Regional Power Grid Tracking** — Connects to live grid carbon intensity APIs (UK National Grid ESO, US CAISO/ERCOT, EU) to compute exact dynamic $\text{g CO}_2\text{e}/\text{kWh}$ and recommend optimal clean-energy EV charging windows.
+- ✈️ **Airport-to-Airport Flight Calculator** — Computes great-circle distances (Haversine formula), cabin class multipliers, DEFRA radiative forcing indices, and high-speed electric rail substitutions.
+- 🔮 **Interactive "What-If" Climate & ROI Simulator** — Interactive scenario sliders modeling 1-year, 5-year, and 10-year cumulative $\text{CO}_2\text{e}$ abatement paired with household financial savings ($).
+- 💼 **Enterprise ESG & Scope 1, 2, 3 Disclosure** — Aligned with the Greenhouse Gas (GHG) Protocol Corporate Standard, featuring cryptographic audit verification hashes and a 1-click printable executive PDF disclosure report.
+- 📊 **Modern Linear/Vercel-Style SaaS Shell & Full Mobile/Desktop Responsiveness** —
+  - 📱 **Mobile-First Responsive Layout** — Optimized touch navigation, bottom app bar for smartphones, floating action buttons, and responsive grid reflows for all screen sizes.
+  - 🔤 **Large High-Legibility Typography Default Everywhere** — Built with generous 18px base typography, 17px chat bubbles, 15px+ meta labels, and 1.6 line height as the permanent default everywhere for effortless readability on all screens.
+  - 🎙️ **Hands-Free Voice Speech-to-Text** — Integrated Web Speech API microphone dictation in chat with real-time audio pulse indicators.
+  - 📲 **Progressive Web App (PWA)** — Offline-capable service worker (`/sw.js`) and web app manifest (`/manifest.json`) for seamless 1-click home screen installation on iOS and Android.
+  - 🏆 **Community Sustainability Leaderboard** — Ranked leaderboards celebrating top carbon savers, entry counts, and unlocked achievement badges.
+  - 📈 **30-Day Daily Carbon Trends** — Dual analytics charts: Category doughnut breakdown alongside a 30-day historical time-series line chart.
+  - ⚠️ **Proactive Carbon Budget Alerts** — Automatic in-chat visual warnings at 80% and 100% daily emissions capacity.
+  - 🌤️ **Ambient Weather Intelligence** — Live outdoor weather context badge via Open-Meteo API to inform HVAC and climate recommendations.
+  - 🏷️ **1-Click Shareable Eco Impact Scorecard** — Instant pop-up card summarizing total avoided emissions and badges with clipboard sharing.
+  - 10 Dedicated Views:
+  1. **💬 AI Carbon Chat** — Conversational agent with voice input, avatars, animated typing indicators, and in-chat action pills.
+  2. **📈 Analytics & Budget** — Real-time KPI metric cards, 30-day daily trend line chart, category doughnut, and daily budget target slider.
+  3. **🏆 Community Leaderboard** — Team and global rankings with Gold/Silver/Bronze badges and carbon avoided totals.
+  4. **⚡ Eco Habits Studio** — 1-click presets (*Morning Coffee*, *Train Commute*, *Plant-Based Lunch*, *Bicycle Ride*, *AC Eco-Scheduling*) with `canvas-confetti` celebrations.
+  5. **📸 Vision Scanner** — Drag-and-drop document OCR dropzone with instant line-item breakdown.
+  6. **🔮 What-If Simulator** — Interactive lifestyle and ROI transition modeling across multi-year horizons.
+  7. **💼 Enterprise ESG** — Corporate Scope 1-2-3 accounting and printable executive balance sheets.
+  8. **📋 Activity History** — Search filtering, category badges, individual row deletion, full wipe, and downloadable CSV report exports (`/api/export-csv`).
+  9. **🌍 Carbon Offset Projects** — Verified Gold Standard & Verra VCS project directory with interactive offset portfolio slider.
 - 🛡️ **Enterprise Zero-Trust Security Checkpoint** — Inspects and intercepts malicious inputs before LLM execution:
   - Regex-hardened prompt injection and persona jailbreak defense (`"ignore previous instructions"`, `"DAN mode"`).
   - Script injection and cross-site scripting (XSS) neutralization.
@@ -66,17 +85,24 @@ flowchart LR
 ```
 ecotracker/
 ├── app/
+│   ├── services/         # Modular enterprise intelligence services
+│   │   ├── vision_scanner.py   # Multimodal receipt & utility bill OCR via Gemini Vision
+│   │   ├── grid_intensity.py   # Live regional power grid carbon intensity & smart charging
+│   │   ├── flight_calculator.py# IATA airport-to-airport aviation & rail substitution
+│   │   ├── simulator.py        # What-If sustainability & multi-year ROI simulator
+│   │   └── esg_report.py       # GHG Protocol Scope 1-2-3 corporate accounting & PDF reporting
 │   ├── dashboard.py      # Production FastAPI app, modern Linear App Shell, REST APIs
 │   ├── engine.py         # Tiered calculation engine, conversational turn handler, baseline logic
 │   ├── security.py       # Multi-layer enterprise security guardrails, PII scrubber, threat audit
-│   ├── db.py             # Multi-tenant SQLite persistence, statistics, milestone badge engine
-│   ├── mcp_server.py     # Local FastMCP server exposing 5 domain tools over stdio
+│   ├── db.py             # Multi-tenant SQLite persistence, Scope 1-2-3 tagging, milestone badges
+│   ├── mcp_server.py     # FastMCP server exposing 7 domain tools over stdio
 │   ├── cloud_llm.py      # Cloud LLM client supporting Groq & Gemini multi-turn dialogue
 │   ├── agent.py          # Google ADK 2.0 workflow graph, human-in-the-loop nodes
 │   ├── config.py         # Environment configuration
 │   └── __init__.py
 ├── assets/               # Architecture diagrams and cover graphics
-├── tests/                # Automated pytest suite (20 tests, 100% pass)
+├── tests/                # Automated pytest suite (26 tests, 100% pass)
+│   ├── test_advanced_features.py # Vision OCR, live grid, flights, what-if simulator, Scope 1-2-3 ESG
 │   ├── test_dashboard_api.py   # REST API lifecycle, CSV export, random input handling
 │   ├── test_security.py        # Prompt injection, credential leaks, PII scrubbing
 │   ├── test_mcp_server.py      # MCP domain emission tools and benchmarks
@@ -121,28 +147,34 @@ uv run pytest tests -v
 ```
 
 ```text
-tests/test_dashboard_api.py::test_dashboard_full_lifecycle PASSED        [  5%]
-tests/test_dashboard_api.py::test_chat_dismissive_and_random_inputs PASSED [ 10%]
-tests/test_db.py::test_log_calculation_and_summary PASSED                [ 15%]
-tests/test_db.py::test_milestone_badges PASSED                           [ 20%]
-tests/test_db.py::test_delete_log_and_clear_user_data PASSED             [ 25%]
-tests/test_mcp_server.py::test_transit_emissions_gasoline_car PASSED     [ 30%]
-tests/test_mcp_server.py::test_transit_emissions_train_and_walking PASSED [ 35%]
-tests/test_mcp_server.py::test_appliance_efficiency PASSED               [ 40%]
-tests/test_mcp_server.py::test_waste_offset PASSED                       [ 45%]
-tests/test_mcp_server.py::test_dietary_emissions PASSED                  [ 50%]
-tests/test_mcp_server.py::test_user_profile_summary PASSED               [ 55%]
-tests/test_security.py::test_prompt_injection_blocked PASSED             [ 60%]
-tests/test_security.py::test_credential_leak_blocked PASSED              [ 65%]
-tests/test_security.py::test_pii_scrubbing_emails_and_phones PASSED      [ 70%]
-tests/test_security.py::test_address_scrubbing_and_distance_preservation PASSED [ 75%]
-tests/test_security.py::test_context_aware_credentials PASSED            [ 80%]
-tests/test_workflow.py::test_security_checkpoint_node_pass PASSED        [ 85%]
-tests/test_workflow.py::test_security_checkpoint_node_block PASSED       [ 90%]
-tests/test_workflow.py::test_post_process_node_hitl_routing PASSED       [ 95%]
+tests/test_advanced_features.py::test_multimodal_vision_scanner PASSED   [  3%]
+tests/test_advanced_features.py::test_grid_carbon_intensity_service PASSED [  7%]
+tests/test_advanced_features.py::test_flight_emissions_and_rail_benchmark PASSED [ 11%]
+tests/test_advanced_features.py::test_what_if_scenario_simulator PASSED  [ 15%]
+tests/test_advanced_features.py::test_enterprise_esg_disclosure_and_html_generation PASSED [ 19%]
+tests/test_advanced_features.py::test_mcp_advanced_tools PASSED          [ 23%]
+tests/test_dashboard_api.py::test_dashboard_full_lifecycle PASSED        [ 26%]
+tests/test_dashboard_api.py::test_chat_dismissive_and_random_inputs PASSED [ 30%]
+tests/test_db.py::test_log_calculation_and_summary PASSED                [ 34%]
+tests/test_db.py::test_milestone_badges PASSED                           [ 38%]
+tests/test_db.py::test_delete_log_and_clear_user_data PASSED             [ 42%]
+tests/test_mcp_server.py::test_transit_emissions_gasoline_car PASSED     [ 46%]
+tests/test_mcp_server.py::test_transit_emissions_train_and_walking PASSED [ 50%]
+tests/test_mcp_server.py::test_appliance_efficiency PASSED               [ 53%]
+tests/test_mcp_server.py::test_waste_offset PASSED                       [ 57%]
+tests/test_mcp_server.py::test_dietary_emissions PASSED                  [ 61%]
+tests/test_mcp_server.py::test_user_profile_summary PASSED               [ 65%]
+tests/test_security.py::test_prompt_injection_blocked PASSED             [ 69%]
+tests/test_security.py::test_credential_leak_blocked PASSED              [ 73%]
+tests/test_security.py::test_pii_scrubbing_emails_and_phones PASSED      [ 76%]
+tests/test_security.py::test_address_scrubbing_and_distance_preservation PASSED [ 80%]
+tests/test_security.py::test_context_aware_credentials PASSED            [ 84%]
+tests/test_workflow.py::test_security_checkpoint_node_pass PASSED        [ 88%]
+tests/test_workflow.py::test_security_checkpoint_node_block PASSED       [ 92%]
+tests/test_workflow.py::test_post_process_node_hitl_routing PASSED       [ 96%]
 tests/test_workflow.py::test_post_process_node_auto_approved PASSED      [100%]
 
-============================= 20 passed in 4.75s ==============================
+============================== 26 passed in 5.12s ==============================
 ```
 
 ---

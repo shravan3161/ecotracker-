@@ -305,5 +305,41 @@ def get_user_profile_summary() -> str:
     summary = db.get_user_summary()
     return json.dumps(summary)
 
+@mcp.tool()
+def get_flight_emissions(origin_iata: str, destination_iata: str, cabin_class: str = "economy", round_trip: bool = False) -> str:
+    """Calculates flight distance, radiative forcing emissions, and electric rail comparisons.
+    
+    Args:
+        origin_iata: 3-letter IATA code of departure airport (e.g. LHR, JFK, SFO, CDG).
+        destination_iata: 3-letter IATA code of arrival airport (e.g. CDG, LAX, AMS, DXB).
+        cabin_class: Cabin class (economy, premium_economy, business, first).
+        round_trip: Whether the flight itinerary is a round trip.
+    """
+    from app.services.flight_calculator import calculate_flight_emissions
+    res = calculate_flight_emissions(origin_iata, destination_iata, cabin_class, round_trip)
+    return json.dumps(res)
+
+@mcp.tool()
+def get_grid_carbon_intensity(region: str = "auto") -> str:
+    """Retrieves real-time or regional grid carbon intensity (g CO2e / kWh) and smart load scheduling.
+    
+    Args:
+        region: Geographic region (e.g. 'uk', 'us-caiso', 'us-ercot', 'eu-france', 'eu-germany', 'australia', 'india', 'auto').
+    """
+    import asyncio
+    from app.services.grid_intensity import get_grid_carbon_intensity as fetch_grid
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop and loop.is_running():
+        import nest_asyncio
+        nest_asyncio.apply()
+        res = loop.run_until_complete(fetch_grid(region))
+    else:
+        res = asyncio.run(fetch_grid(region))
+    return json.dumps(res)
+
 if __name__ == "__main__":
     mcp.run()

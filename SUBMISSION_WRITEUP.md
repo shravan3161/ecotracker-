@@ -164,7 +164,25 @@ Building upon the initial core architecture, EcoTracker has been upgraded into a
 5. **Context-Aware Enterprise Security (`app/security.py`)**:
    - Refactored regex patterns to support international phone formats and context-aware credential detection, eliminating false positives on technical units (e.g., electrical plugs, distance measurements).
 6. **Automated Test Suite & CI (`tests/`, `.github/workflows/ci.yml`)**:
-   - 16 automated tests covering MCP calculations, security edge cases, persistence, and workflow node state transitions.
+   - 26 automated tests covering MCP calculations, security edge cases, persistence, vision OCR, and workflow node state transitions.
+7. **Multimodal Vision Intelligence (`app/services/vision_scanner.py`)**:
+   - Integrated Gemini 2.5 Flash Vision OCR extracting line-item emissions from grocery receipts and electric/gas utility bills with instant green swap recommendations.
+8. **Dynamic Grid Carbon Intensity Tracking (`app/services/grid_intensity.py`)**:
+   - Real-time UK National Grid ESO API integration and regional eGRID/ENTSO-E modeling providing dynamic g CO2e/kWh and smart EV load-shifting recommendations.
+9. **Airport-to-Airport Flight Calculator (`app/services/flight_calculator.py`)**:
+   - Haversine great-circle distance modeling with DEFRA radiative forcing indices (RFI 1.9x) and high-speed rail substitution analysis.
+10. **"What-If" Climate & ROI Scenario Simulator (`app/services/simulator.py`)**:
+    - Multi-lever transition engine modeling 1-year, 5-year, and 10-year cumulative CO2e abatement alongside household financial savings ($ USD).
+11. **Enterprise ESG Scope 1, 2, 3 Disclosure (`app/services/esg_report.py`)**:
+    - Corporate sustainability accounting aligned with the GHG Protocol Corporate Standard, featuring cryptographic audit hashes and a 1-click printable executive PDF report.
+12. **Mobile & Desktop Responsive Architecture with Permanent Large Typography (`app/frontend.py`)**:
+    - Built with high-contrast, generous 18px base typography (17px chat bubbles, 15px+ meta labels, 1.6 line-height) set as the permanent default everywhere, paired with mobile bottom app bar navigation and touch-first accessibility.
+13. **Progressive Web App (PWA) & Voice Speech-to-Text**:
+    - Offline service worker (`/sw.js`), web manifest (`/manifest.json`), and hands-free microphone voice dictation via Web Speech API.
+14. **Community Leaderboard & 30-Day Carbon Trends**:
+    - Ranked team sustainability leaderboard and 30-day historical time-series analytics chart powered by Chart.js.
+15. **Full React 19 + Vite Single Page Application (`frontend/`)**:
+    - Complete reactive component architecture with React 19, Chart.js, and Canvas-Confetti. Pre-compiled to `static_dist/` and served seamlessly via FastAPI at `/`, alongside a dedicated Vite HMR development server.
 
 ---
 
@@ -177,11 +195,21 @@ ecotracker/
 │   ├── mcp_server.py     # FastMCP server — 5 domain-specific carbon tools
 │   ├── db.py             # SQLite persistence, profile statistics, and badge engine
 │   ├── security.py       # Enterprise PII scrubbing, injection, and credential guardrails
-│   ├── dashboard.py      # Interactive FastAPI & Chart.js visual analytics dashboard
+│   ├── dashboard.py      # Interactive FastAPI & REST endpoints
+│   ├── frontend.py       # Responsive mobile/desktop UI, PWA shell, and components
 │   ├── fast_api_app.py   # Vertex AI Reasoning Engine & A2A production server
 │   ├── config.py         # Env-var config
 │   └── __init__.py
-├── tests/                # Automated pytest suite (16 tests)
+├── frontend/             # Modern React 19 + Vite Single Page Application (SPA)
+│   ├── src/
+│   │   ├── components/   # Modular React views (Chat, Vision, Analytics, Leaderboard...)
+│   │   ├── App.jsx       # Root reactive application
+│   │   └── index.css     # Permanent high-contrast large typography & themes
+│   └── vite.config.js    # Vite configuration & backend proxy
+├── static_dist/          # Pre-compiled high-performance production React assets
+├── tests/                # Automated pytest suite (29 tests)
+│   ├── test_advanced_features.py
+│   ├── test_dashboard_api.py
 │   ├── test_db.py
 │   ├── test_mcp_server.py
 │   ├── test_security.py
