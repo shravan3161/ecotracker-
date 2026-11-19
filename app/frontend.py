@@ -889,12 +889,6 @@ def get_dashboard_html() -> str:
                 </div>
 
                 <div class="header-actions">
-                    <div class="status-badge" id="weather-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;" title="Outdoor Ambient Weather (Open-Meteo)">
-                        ☀️ 22°C (Mild HVAC)
-                    </div>
-                    <div class="status-badge" id="grid-intensity-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;" onclick="fetchLiveGridStatus()" title="Live Regional Power Grid Carbon Intensity">
-                        ⚡ Grid: Loading...
-                    </div>
                     <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light theme">🌗 Theme</button>
                 </div>
             </header>

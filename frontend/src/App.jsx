@@ -142,9 +142,6 @@ export default function App() {
         <Header
           activeTab={activeTab}
           onOpenMobileMenu={() => setIsDrawerOpen(true)}
-          weather={weather}
-          gridStatus={gridStatus}
-          onRefreshGrid={fetchLiveGridStatus}
           theme={theme}
           onToggleTheme={handleToggleTheme}
         />
@@ -171,6 +168,9 @@ export default function App() {
             <AnalyticsView
               dashboardData={dashboardData}
               userId={userId}
+              weather={weather}
+              gridStatus={gridStatus}
+              onRefreshGrid={fetchLiveGridStatus}
               onRefreshDashboard={loadDashboardData}
               onShowToast={showToast}
             />

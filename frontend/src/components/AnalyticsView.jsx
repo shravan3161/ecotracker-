@@ -24,7 +24,15 @@ ChartJS.register(
   Filler
 );
 
-export default function AnalyticsView({ dashboardData, userId, onRefreshDashboard, onShowToast }) {
+export default function AnalyticsView({
+  dashboardData,
+  userId,
+  weather,
+  gridStatus,
+  onRefreshGrid,
+  onRefreshDashboard,
+  onShowToast
+}) {
   const [budgetSlider, setBudgetSlider] = useState(dashboardData?.daily_budget_kg || 15);
   const [dailyTrends, setDailyTrends] = useState([]);
   const trendChartRef = useRef(null);
@@ -265,6 +273,67 @@ export default function AnalyticsView({ dashboardData, userId, onRefreshDashboar
           />
           <span style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>40 kg</span>
         </div>
+      </div>
+
+      {/* Real-time Grid & Ambient Weather Telemetry */}
+      <div className="modern-card" style={{ marginTop: '24px' }}>
+        <div className="card-title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>⚡ Regional Power Grid & Weather Telemetry</span>
+          </div>
+          {onRefreshGrid && (
+            <button
+              onClick={onRefreshGrid}
+              className="btn-outline"
+              style={{ padding: '6px 14px', fontSize: '13px', cursor: 'pointer', borderRadius: '8px' }}
+              title="Refresh grid intensity"
+            >
+              🔄 Refresh Grid
+            </button>
+          )}
+        </div>
+
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '16px' }}>
+          Live regional electricity grid intensity from National Grid ESO and local outdoor ambient weather from Open-Meteo for smart appliance & EV charge scheduling.
+        </p>
+
+        <div className="grid-3" style={{ gap: '16px', marginBottom: '16px' }}>
+          <div style={{ background: 'var(--bg-card-hover)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>Power Grid Intensity</div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: gridStatus?.badge_color || '#34d399' }}>
+              {gridStatus ? `${gridStatus.intensity_g_kwh} g CO2/kWh` : 'Loading...'}
+            </div>
+            <div style={{ fontSize: '12px', marginTop: '4px', color: 'var(--text-secondary)' }}>
+              Region: {gridStatus?.region || 'Detecting...'} ({gridStatus?.rating || 'LIVE'})
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-card-hover)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>Ambient Temperature & HVAC</div>
+            <div style={{ fontSize: '22px', fontWeight: 700, color: '#38bdf8' }}>
+              {weather ? `☀️ ${weather.temp}°C` : 'Detecting...'}
+            </div>
+            <div style={{ fontSize: '12px', marginTop: '4px', color: 'var(--text-secondary)' }}>
+              HVAC Load: {weather?.condition || 'Analyzing thermal load'}
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--bg-card-hover)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>Recommended Window</div>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              {gridStatus?.recommended_action || 'Monitoring energy grid'}
+            </div>
+            <div style={{ fontSize: '12px', marginTop: '4px', color: 'var(--text-secondary)' }}>
+              Optimal: {gridStatus?.optimal_charging_window || 'Off-peak overnight'}
+            </div>
+          </div>
+        </div>
+
+        {gridStatus?.status_message && (
+          <div style={{ background: 'rgba(16, 185, 129, 0.08)', borderLeft: '4px solid #10b981', padding: '12px 16px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+            💡 <strong>Smart Energy Advisory:</strong> {gridStatus.status_message} Shifting a 45 kWh EV charging session saves up to <strong>+{gridStatus.shift_savings?.ev_full_charge_savings_kg || 4.5} kg CO2e</strong>.
+          </div>
+        )}
       </div>
     </div>
   );
