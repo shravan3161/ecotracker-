@@ -33,13 +33,17 @@ export default function App() {
     document.documentElement.setAttribute('data-font-scale', 'large');
   }, [theme]);
 
-  // Toast helper
+  // Toast helper (single active toast, fast auto-dismiss, click-to-dismiss)
   const showToast = useCallback((msg) => {
     const id = Date.now();
-    setToasts((prev) => [...prev, { id, msg }]);
+    setToasts([{ id, msg }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3500);
+    }, 1800);
+  }, []);
+
+  const dismissToast = useCallback((id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   // Fetch Dashboard Data
@@ -106,11 +110,18 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Toast Stack */}
+      {/* Toast Alert (Single, Auto-Dismiss, Click to Close) */}
       <div className="toast-container">
         {toasts.map((t) => (
-          <div key={t.id} className="toast">
-            {t.msg}
+          <div
+            key={t.id}
+            className="toast"
+            onClick={() => dismissToast(t.id)}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}
+            title="Click to dismiss"
+          >
+            <span>{t.msg}</span>
+            <span style={{ fontSize: '13px', opacity: 0.6, marginLeft: '6px' }}>✕</span>
           </div>
         ))}
       </div>
@@ -177,7 +188,7 @@ export default function App() {
 
           {activeTab === 'simulator' && <SimulatorView />}
 
-          {activeTab === 'esg' && <EsgView />}
+          {activeTab === 'esg' && <EsgView onShowToast={showToast} />}
 
           {activeTab === 'history' && (
             <HistoryView

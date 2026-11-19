@@ -1500,16 +1500,20 @@ def get_dashboard_html() -> str:
 
         function showToast(message) {
             const container = document.getElementById('toast-container');
+            container.innerHTML = '';
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.innerText = message;
+            toast.style.cursor = 'pointer';
+            toast.title = 'Click to dismiss';
+            toast.innerHTML = `<span>${message}</span><span style="font-size: 13px; opacity: 0.6; margin-left: 8px;">✕</span>`;
+            toast.onclick = () => toast.remove();
             container.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(-6px)';
                 toast.style.transition = 'all 0.25s ease';
                 setTimeout(() => toast.remove(), 250);
-            }, 3200);
+            }, 1800);
         }
 
         function switchTab(tabId) {

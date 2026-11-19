@@ -151,8 +151,11 @@ export default function AnalyticsView({ dashboardData, userId, onRefreshDashboar
     };
   }, [dailyTrends, dashboardData?.category_breakdown]);
 
-  const saveBudget = async (newVal) => {
+  const handleBudgetChange = (newVal) => {
     setBudgetSlider(newVal);
+  };
+
+  const commitBudgetChange = async (newVal) => {
     try {
       await fetch('/api/budget', {
         method: 'POST',
@@ -255,7 +258,9 @@ export default function AnalyticsView({ dashboardData, userId, onRefreshDashboar
             max="40"
             step="1"
             value={budgetSlider}
-            onChange={(e) => saveBudget(e.target.value)}
+            onChange={(e) => handleBudgetChange(e.target.value)}
+            onPointerUp={(e) => commitBudgetChange(e.target.value)}
+            onKeyUp={(e) => commitBudgetChange(e.target.value)}
             style={{ flex: 1, accentColor: 'var(--primary)', height: '8px', cursor: 'pointer' }}
           />
           <span style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>40 kg</span>
