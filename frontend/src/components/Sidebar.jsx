@@ -26,10 +26,29 @@ export default function Sidebar({
     <aside className="desktop-sidebar">
       <div>
         <div className="brand-header">
-          <div className="brand-logo">🌱</div>
+          <div className="brand-logo" style={{ background: 'transparent', boxShadow: 'none', padding: 0 }}>
+            <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+              <rect width="64" height="64" rx="16" fill="#080d1a" stroke="rgba(16, 185, 129, 0.45)" strokeWidth="2.5" />
+              <path d="M32 9 C47 9, 54 22, 52 38 C50 51, 38 55, 32 55 C26 55, 14 51, 12 38 C10 22, 17 9, 32 9 Z" fill="url(#brandGrad)" />
+              <path d="M32 17 L32 47" stroke="#ffffff" strokeWidth="3.2" strokeLinecap="round" />
+              <path d="M32 25 L43 19" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+              <circle cx="43" cy="19" r="2.5" fill="#38bdf8" />
+              <path d="M32 33 L21 27" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+              <circle cx="21" cy="27" r="2.5" fill="#38bdf8" />
+              <path d="M32 41 L41 36" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+              <circle cx="41" cy="36" r="2.5" fill="#38bdf8" />
+              <circle cx="32" cy="16" r="4" fill="#38bdf8" stroke="#ffffff" strokeWidth="1.8" />
+              <defs>
+                <linearGradient id="brandGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#34d399" />
+                  <stop offset="1" stopColor="#059669" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <div>
             <div className="brand-title">
-              EcoTracker<span className="brand-badge">React</span>
+              EcoTracker<span className="brand-badge">AI</span>
             </div>
           </div>
         </div>

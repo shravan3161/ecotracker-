@@ -33,9 +33,10 @@ def get_dashboard_html() -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <title>EcoTracker — AI Sustainability Intelligence Platform</title>
+    <title>🌱 EcoTracker — AI Sustainability Intelligence Platform</title>
     <meta name="description" content="Autonomous enterprise-grade AI carbon intelligence platform. Calculate footprints, scan receipts, simulate climate ROI, and generate ESG disclosures.">
     <meta name="theme-color" content="#080d1a">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="manifest" href="/manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -824,9 +825,28 @@ def get_dashboard_html() -> str:
         <aside class="desktop-sidebar">
             <div>
                 <div class="brand-header">
-                    <div class="brand-logo">🌱</div>
+                    <div class="brand-logo" style="background: transparent; box-shadow: none; padding: 0;">
+                        <svg width="42" height="42" viewBox="0 0 64 64" fill="none">
+                            <rect width="64" height="64" rx="16" fill="#080d1a" stroke="rgba(16, 185, 129, 0.45)" stroke-width="2.5" />
+                            <path d="M32 9 C47 9, 54 22, 52 38 C50 51, 38 55, 32 55 C26 55, 14 51, 12 38 C10 22, 17 9, 32 9 Z" fill="url(#brandGrad)" />
+                            <path d="M32 17 L32 47" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" />
+                            <path d="M32 25 L43 19" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                            <circle cx="43" cy="19" r="2.5" fill="#38bdf8" />
+                            <path d="M32 33 L21 27" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                            <circle cx="21" cy="27" r="2.5" fill="#38bdf8" />
+                            <path d="M32 41 L41 36" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                            <circle cx="41" cy="36" r="2.5" fill="#38bdf8" />
+                            <circle cx="32" cy="16" r="4" fill="#38bdf8" stroke="#ffffff" stroke-width="1.8" />
+                            <defs>
+                                <linearGradient id="brandGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#34d399" />
+                                    <stop offset="1" stop-color="#059669" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
                     <div>
-                        <div class="brand-title">EcoTracker<span class="brand-badge">SaaS</span></div>
+                        <div class="brand-title">EcoTracker<span class="brand-badge">AI</span></div>
                     </div>
                 </div>
 

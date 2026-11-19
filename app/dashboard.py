@@ -240,6 +240,36 @@ def get_daily_trends_endpoint(user_id: str = Query("default_customer")):
     """Returns daily emissions and savings timeline for historical trend charts."""
     return JSONResponse(content={"status": "success", "trends": db.get_daily_trends(user_id=user_id)})
 
+FAVICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="ecoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#080d1a" />
+  <rect width="60" height="60" x="2" y="2" rx="14" fill="none" stroke="url(#glowGrad)" stroke-width="2.5" stroke-opacity="0.6" />
+  <path d="M32 9 C47 9, 54 22, 52 38 C50 51, 38 55, 32 55 C26 55, 14 51, 12 38 C10 22, 17 9, 32 9 Z" fill="url(#ecoGrad)" />
+  <path d="M32 17 L32 47" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M32 25 L43 19" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="43" cy="19" r="2.5" fill="#38bdf8" />
+  <path d="M32 33 L21 27" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="21" cy="27" r="2.5" fill="#38bdf8" />
+  <path d="M32 41 L41 36" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="41" cy="36" r="2.5" fill="#38bdf8" />
+  <circle cx="32" cy="16" r="4" fill="#38bdf8" stroke="#ffffff" stroke-width="1.8" />
+</svg>"""
+
+@dashboard_app.get("/favicon.ico")
+@dashboard_app.get("/favicon.svg")
+def get_favicon():
+    """Serves high-resolution custom SVG favicon for browser tabs."""
+    return Response(content=FAVICON_SVG, media_type="image/svg+xml")
+
 @dashboard_app.get("/manifest.json")
 def get_manifest():
     """Returns PWA Web App Manifest for mobile installation."""
