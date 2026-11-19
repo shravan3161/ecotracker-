@@ -238,7 +238,7 @@ EcoTracker is architected as an extensible, enterprise-grade sustainability inte
 
 - **[Google ADK 2.0](https://adk.dev/)** — Autonomous Agent Development Kit
 - **[Model Context Protocol (FastMCP)](https://github.com/jlowin/fastmcp)** — High-performance domain tool integration
-- **[FastAPI](https://fastapi.tiangolo.com/) & [Uvicorn](https://www.uvicorn.org/)** — Asynchronous web framework & ASGI server
+- **[FastAPI](https://fastapi.tiangolo.com/) & [Uvicorn](https://www.uvicorn.org/)** — Asynchronous web framework & ASGI servers
 - **[Chart.js](https://www.chartjs.org/) & [Canvas-Confetti](https://github.com/catdad/canvas-confetti)** — Modern client-side visualizations
 - **[Marked.js](https://marked.js.org/)** — Clean client-side markdown formatting
 - **[SQLite3](https://www.sqlite.org/)** — Transactional multi-tenant persistence
