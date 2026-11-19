@@ -16,10 +16,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv for fast dependency management
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-# Copy project specification files and app
+# Copy project specification files, app, and static distribution
 COPY pyproject.toml ./
 COPY app ./app
 COPY assets ./assets
+COPY static_dist ./static_dist
 
 # Install Python dependencies using uv
 RUN uv pip install --system -e .
